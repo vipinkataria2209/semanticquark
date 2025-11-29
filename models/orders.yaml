@@ -1,0 +1,104 @@
+cubes:
+  - name: orders
+    table: orders
+    description: E-commerce orders cube
+    
+    dimensions:
+      id:
+        type: number
+        primary_key: true
+        sql: id
+      
+      order_number:
+        type: string
+        sql: order_number
+        description: Unique order number
+      
+      status:
+        type: string
+        sql: status
+        description: Order status (pending, processing, shipped, delivered, cancelled, refunded)
+      
+      order_date:
+        type: time
+        sql: order_date
+        description: Order date
+        granularities: [day, week, month, quarter, year]
+      
+      created_at:
+        type: time
+        sql: created_at
+        description: Order creation date
+        granularities: [day, week, month, quarter, year]
+      
+      customer_id:
+        type: number
+        sql: customer_id
+        description: Customer identifier
+      
+      shipped_date:
+        type: time
+        sql: shipped_date
+        description: Date when order was shipped
+      
+      delivered_date:
+        type: time
+        sql: delivered_date
+        description: Date when order was delivered
+    
+    measures:
+      count:
+        type: count
+        sql: id
+        description: Total number of orders
+      
+      total_revenue:
+        type: sum
+        sql: total_amount
+        description: Total revenue from orders
+        format: currency
+      
+      average_order_value:
+        type: avg
+        sql: total_amount
+        description: Average order value
+        format: currency
+      
+      total_subtotal:
+        type: sum
+        sql: subtotal
+        description: Total subtotal
+        format: currency
+      
+      total_tax:
+        type: sum
+        sql: tax
+        description: Total tax collected
+        format: currency
+      
+      total_shipping:
+        type: sum
+        sql: shipping_cost
+        description: Total shipping costs
+        format: currency
+      
+      total_discount:
+        type: sum
+        sql: discount
+        description: Total discounts applied
+        format: currency
+    
+    relationships:
+      customer:
+        type: belongs_to
+        cube: customers
+        foreign_key: customer_id
+    
+    pre_aggregations:
+      - name: orders_daily
+        dimensions: [status, created_at]
+        measures: [count, total_revenue]
+        time_dimension: created_at
+        granularity: day
+        refresh_key:
+          every: 1 hour

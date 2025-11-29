@@ -1,0 +1,224 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+  <defs>
+    <!-- Gradients for different phases -->
+    <linearGradient id="setup" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:0.2" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:0.2" />
+    </linearGradient>
+    <linearGradient id="security" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#f093fb;stop-opacity:0.2" />
+      <stop offset="100%" style="stop-color:#f5576c;stop-opacity:0.2" />
+    </linearGradient>
+    <linearGradient id="processing" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4facfe;stop-opacity:0.2" />
+      <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:0.2" />
+    </linearGradient>
+    <linearGradient id="performance" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#43e97b;stop-opacity:0.2" />
+      <stop offset="100%" style="stop-color:#38f9d7;stop-opacity:0.2" />
+    </linearGradient>
+    <linearGradient id="execution" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#fa709a;stop-opacity:0.2" />
+      <stop offset="100%" style="stop-color:#fee140;stop-opacity:0.2" />
+    </linearGradient>
+    
+    <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#333333" />
+    </marker>
+  </defs>
+  
+  <!-- Background -->
+  <rect x="0" y="0" width="1000" height="1000" fill="#fafbfc"/>
+  
+  <!-- Title -->
+  <text x="500" y="35" font-family="'Segoe UI', Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#1a1a1a">
+    Framework Process Flow
+  </text>
+  <text x="500" y="55" font-family="'Segoe UI', Arial, sans-serif" font-size="13" text-anchor="middle" fill="#666666">
+    17 Steps from Model Definition to Response Delivery
+  </text>
+  
+  <!-- Phase background bars -->
+  <rect x="50" y="90" width="270" height="190" rx="8" fill="url(#setup)" stroke="#667eea" stroke-width="1" opacity="0.5"/>
+  <rect x="50" y="290" width="270" height="440" rx="8" fill="url(#security)" stroke="#f5576c" stroke-width="1" opacity="0.5"/>
+  <rect x="350" y="90" width="270" height="270" rx="8" fill="url(#processing)" stroke="#00f2fe" stroke-width="1" opacity="0.5"/>
+  <rect x="350" y="370" width="270" height="360" rx="8" fill="url(#performance)" stroke="#38f9d7" stroke-width="1" opacity="0.5"/>
+  <rect x="650" y="90" width="270" height="640" rx="8" fill="url(#execution)" stroke="#fee140" stroke-width="1" opacity="0.5"/>
+  
+  <!-- START -->
+  <ellipse cx="185" cy="110" rx="70" ry="28" fill="#667eea" stroke="#5568d3" stroke-width="2"/>
+  <text x="185" y="117" font-family="'Segoe UI', Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#ffffff">START</text>
+  <line x1="185" y1="138" x2="185" y2="158" stroke="#333333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 1 - Setup -->
+  <rect x="95" y="158" width="180" height="55" rx="10" fill="#ffffff" stroke="#667eea" stroke-width="2"/>
+  <text x="185" y="175" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#667eea">1: Model Definition</text>
+  <text x="105" y="190" font-family="Arial, sans-serif" font-size="8" fill="#333">• YAML files: cubes, dimensions</text>
+  <text x="105" y="203" font-family="Arial, sans-serif" font-size="8" fill="#333">• Measures, relationships</text>
+  <line x1="185" y1="213" x2="185" y2="228" stroke="#333333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 2 -->
+  <rect x="95" y="228" width="180" height="50" rx="10" fill="#ffffff" stroke="#667eea" stroke-width="2"/>
+  <text x="185" y="245" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#667eea">2: Schema Loading</text>
+  <text x="105" y="260" font-family="Arial, sans-serif" font-size="8" fill="#333">• Parse & validate on startup</text>
+  <text x="105" y="270" font-family="Arial, sans-serif" font-size="8" fill="#333">• Build Schema object</text>
+  <line x1="185" y1="278" x2="185" y2="298" stroke="#333333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 3 - Security Phase -->
+  <rect x="95" y="298" width="180" height="50" rx="10" fill="#ffffff" stroke="#f5576c" stroke-width="2"/>
+  <text x="185" y="315" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#f5576c">3: Request Reception</text>
+  <text x="105" y="330" font-family="Arial, sans-serif" font-size="8" fill="#333">• HTTP: REST/GraphQL/SQL</text>
+  <text x="105" y="340" font-family="Arial, sans-serif" font-size="8" fill="#333">• Extract request body</text>
+  <line x1="185" y1="348" x2="185" y2="368" stroke="#333333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 4 -->
+  <rect x="95" y="368" width="180" height="50" rx="10" fill="#ffffff" stroke="#f5576c" stroke-width="2"/>
+  <text x="185" y="385" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#f5576c">4: Authentication</text>
+  <text x="105" y="400" font-family="Arial, sans-serif" font-size="8" fill="#333">• Validate JWT/API key</text>
+  <text x="105" y="410" font-family="Arial, sans-serif" font-size="8" fill="#333">• Create SecurityContext</text>
+  <line x1="185" y1="418" x2="185" y2="438" stroke="#333333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Decision: Authenticated? -->
+  <path d="M 185 438 L 230 463 L 185 488 L 140 463 Z" fill="#ffe6e6" stroke="#f5576c" stroke-width="2"/>
+  <text x="185" y="467" font-family="'Segoe UI', Arial, sans-serif" font-size="9" font-weight="bold" text-anchor="middle" fill="#c93a3a">Auth?</text>
+  
+  <line x1="230" y1="463" x2="290" y2="463" stroke="#cc0000" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="250" y="458" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#cc0000">NO</text>
+  <ellipse cx="310" cy="463" rx="18" ry="18" fill="#ff4444" stroke="#cc0000" stroke-width="2"/>
+  <text x="310" y="468" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#fff">401</text>
+  
+  <line x1="185" y1="488" x2="185" y2="508" stroke="#333333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="165" y="501" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#00aa00">YES</text>
+  
+  <!-- Step 5 -->
+  <rect x="95" y="508" width="180" height="50" rx="10" fill="#ffffff" stroke="#f5576c" stroke-width="2"/>
+  <text x="185" y="525" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#f5576c">5: Authorization</text>
+  <text x="105" y="540" font-family="Arial, sans-serif" font-size="8" fill="#333">• Check permissions & roles</text>
+  <text x="105" y="550" font-family="Arial, sans-serif" font-size="8" fill="#333">• Apply RLS rules</text>
+  <line x1="185" y1="558" x2="185" y2="578" stroke="#333333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Decision: Authorized? -->
+  <path d="M 185 578 L 230 603 L 185 628 L 140 603 Z" fill="#ffe6e6" stroke="#f5576c" stroke-width="2"/>
+  <text x="185" y="607" font-family="'Segoe UI', Arial, sans-serif" font-size="9" font-weight="bold" text-anchor="middle" fill="#c93a3a">Auth?</text>
+  
+  <line x1="230" y1="603" x2="290" y2="603" stroke="#cc0000" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="250" y="598" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#cc0000">NO</text>
+  <ellipse cx="310" cy="603" rx="18" ry="18" fill="#ff4444" stroke="#cc0000" stroke-width="2"/>
+  <text x="310" y="608" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#fff">403</text>
+  
+  <line x1="185" y1="628" x2="185" y2="648" stroke="#333333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="165" y="641" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#00aa00">YES</text>
+  
+  <!-- Step 6 -->
+  <rect x="95" y="648" width="180" height="50" rx="10" fill="#ffffff" stroke="#f5576c" stroke-width="2"/>
+  <text x="185" y="665" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#f5576c">6: Query Parsing</text>
+  <text x="105" y="680" font-family="Arial, sans-serif" font-size="8" fill="#333">• Extract dimensions/measures</text>
+  <text x="105" y="690" font-family="Arial, sans-serif" font-size="8" fill="#333">• Create Query object</text>
+  
+  <!-- Arrow from Step 6 to Step 7 -->
+  <path d="M 275 673 L 335 673 L 335 123 L 365 123" stroke="#333333" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- COLUMN 2 - Processing Phase -->
+  
+  <!-- Step 7 -->
+  <rect x="365" y="98" width="180" height="50" rx="10" fill="#ffffff" stroke="#00f2fe" stroke-width="2"/>
+  <text x="455" y="115" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#00a8cc">7: Query Validation</text>
+  <text x="375" y="130" font-family="Arial, sans-serif" font-size="8" fill="#333">• Check cube references</text>
+  <text x="375" y="140" font-family="Arial, sans-serif" font-size="8" fill="#333">• Validate dimensions/measures</text>
+  <line x1="455" y1="148" x2="455" y2="168" stroke="#333333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 8 -->
+  <rect x="365" y="168" width="180" height="50" rx="10" fill="#ffffff" stroke="#00f2fe" stroke-width="2"/>
+  <text x="455" y="185" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#00a8cc">8: Query Optimization</text>
+  <text x="375" y="200" font-family="Arial, sans-serif" font-size="8" fill="#333">• Remove duplicates</text>
+  <text x="375" y="210" font-family="Arial, sans-serif" font-size="8" fill="#333">• Reorder filters, pushdown</text>
+  <line x1="455" y1="218" x2="455" y2="238" stroke="#333333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 9 -->
+  <rect x="365" y="238" width="180" height="50" rx="10" fill="#ffffff" stroke="#00f2fe" stroke-width="2"/>
+  <text x="455" y="255" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#00a8cc">9: Cache Check</text>
+  <text x="375" y="270" font-family="Arial, sans-serif" font-size="8" fill="#333">• Generate cache key</text>
+  <text x="375" y="280" font-family="Arial, sans-serif" font-size="8" fill="#333">• Check Redis/Memory</text>
+  <line x1="455" y1="288" x2="455" y2="308" stroke="#333333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Decision: Cache Hit? -->
+  <path d="M 455 308 L 500 333 L 455 358 L 410 333 Z" fill="#e6fff2" stroke="#00f2fe" stroke-width="2"/>
+  <text x="455" y="337" font-family="'Segoe UI', Arial, sans-serif" font-size="9" font-weight="bold" text-anchor="middle" fill="#00a8cc">Cache?</text>
+  
+  <line x1="500" y1="333" x2="560" y2="333" stroke="#00aa00" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="520" y="328" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#00aa00">HIT</text>
+  <ellipse cx="580" cy="333" rx="18" ry="18" fill="#44dd88" stroke="#00aa00" stroke-width="2"/>
+  <text x="580" y="338" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#fff">✓</text>
+  
+  <line x1="455" y1="358" x2="455" y2="378" stroke="#333333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="430" y="371" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#666">MISS</text>
+  
+  <!-- Step 10 - Performance Phase -->
+  <rect x="365" y="378" width="180" height="50" rx="10" fill="#ffffff" stroke="#38f9d7" stroke-width="2"/>
+  <text x="455" y="395" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#2baa88">10: Pre-Agg Routing</text>
+  <text x="375" y="410" font-family="Arial, sans-serif" font-size="8" fill="#333">• Check materialized views</text>
+  <text x="375" y="420" font-family="Arial, sans-serif" font-size="8" fill="#333">• Route if available</text>
+  <line x1="455" y1="428" x2="455" y2="448" stroke="#333333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 11 -->
+  <rect x="365" y="448" width="180" height="50" rx="10" fill="#ffffff" stroke="#38f9d7" stroke-width="2"/>
+  <text x="455" y="465" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#2baa88">11: SQL Generation</text>
+  <text x="375" y="480" font-family="Arial, sans-serif" font-size="8" fill="#333">• SELECT, FROM with JOINs</text>
+  <text x="375" y="490" font-family="Arial, sans-serif" font-size="8" fill="#333">• WHERE, GROUP BY, RLS</text>
+  <line x1="455" y1="498" x2="455" y2="518" stroke="#333333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 12 -->
+  <rect x="365" y="518" width="180" height="50" rx="10" fill="#ffffff" stroke="#38f9d7" stroke-width="2"/>
+  <text x="455" y="535" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#2baa88">12: DB Execution</text>
+  <text x="375" y="550" font-family="Arial, sans-serif" font-size="8" fill="#333">• Connection pool</text>
+  <text x="375" y="560" font-family="Arial, sans-serif" font-size="8" fill="#333">• Execute SQL async</text>
+  
+  <!-- Arrow from Step 12 to Step 13 -->
+  <path d="M 545 543 L 625 543 L 625 123 L 665 123" stroke="#333333" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- COLUMN 3 - Response Phase -->
+  
+  <!-- Step 13 -->
+  <rect x="665" y="98" width="180" height="50" rx="10" fill="#ffffff" stroke="#fee140" stroke-width="2"/>
+  <text x="755" y="115" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#cc9900">13: Result Transform</text>
+  <text x="675" y="130" font-family="Arial, sans-serif" font-size="8" fill="#333">• Transform to JSON</text>
+  <text x="675" y="140" font-family="Arial, sans-serif" font-size="8" fill="#333">• Type conversions</text>
+  <line x1="755" y1="148" x2="755" y2="168" stroke="#333333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 14 -->
+  <rect x="665" y="168" width="180" height="50" rx="10" fill="#ffffff" stroke="#fee140" stroke-width="2"/>
+  <text x="755" y="185" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#cc9900">14: Cache Storage</text>
+  <text x="675" y="200" font-family="Arial, sans-serif" font-size="8" fill="#333">• Store results with TTL</text>
+  <text x="675" y="210" font-family="Arial, sans-serif" font-size="8" fill="#333">• Update metrics</text>
+  <line x1="755" y1="218" x2="755" y2="238" stroke="#333333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 15 -->
+  <rect x="665" y="238" width="180" height="50" rx="10" fill="#ffffff" stroke="#fee140" stroke-width="2"/>
+  <text x="755" y="255" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#cc9900">15: Logging & Metrics</text>
+  <text x="675" y="270" font-family="Arial, sans-serif" font-size="8" fill="#333">• Log query execution</text>
+  <text x="675" y="280" font-family="Arial, sans-serif" font-size="8" fill="#333">• Update Prometheus</text>
+  <line x1="755" y1="288" x2="755" y2="308" stroke="#333333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 16 -->
+  <rect x="665" y="308" width="180" height="50" rx="10" fill="#ffffff" stroke="#fee140" stroke-width="2"/>
+  <text x="755" y="325" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#cc9900">16: Response Format</text>
+  <text x="675" y="340" font-family="Arial, sans-serif" font-size="8" fill="#333">• API envelope with metadata</text>
+  <text x="675" y="350" font-family="Arial, sans-serif" font-size="8" fill="#333">• Set HTTP headers</text>
+  <line x1="755" y1="358" x2="755" y2="378" stroke="#333333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 17 -->
+  <rect x="665" y="378" width="180" height="50" rx="10" fill="#ffffff" stroke="#fee140" stroke-width="2"/>
+  <text x="755" y="395" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#cc9900">17: Return Response</text>
+  <text x="675" y="410" font-family="Arial, sans-serif" font-size="8" fill="#333">• HTTP 200 OK + JSON</text>
+  <text x="675" y="420" font-family="Arial, sans-serif" font-size="8" fill="#333">• Close DB connection</text>
+  <line x1="755" y1="428" x2="755" y2="448" stroke="#333333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- END -->
+  <ellipse cx="755" cy="476" rx="70" ry="28" fill="#330867" stroke="#220547" stroke-width="2"/>
+  <text x="755" y="483" font-family="'Segoe UI', Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#ffffff">END</text>
+  
+  <!-- Footer -->
+  <text x="500" y="970" font-family="'Segoe UI', Arial, sans-serif" font-size="11" text-anchor="middle" fill="#999">
+    Complete semantic layer framework process flow with color-coded phases
+  </text>
+</svg>

@@ -1,0 +1,67 @@
+cubes:
+  - name: order_items
+    table: order_items
+    description: Order items cube
+    
+    dimensions:
+      id:
+        type: number
+        primary_key: true
+        sql: id
+      
+      order_id:
+        type: number
+        sql: order_id
+        description: Order ID
+      
+      product_id:
+        type: number
+        sql: product_id
+        description: Product ID
+      
+      created_at:
+        type: time
+        sql: created_at
+        description: Order item creation date
+        granularities: [day, week, month, quarter, year]
+    
+    measures:
+      count:
+        type: count
+        sql: id
+        description: Total number of order items
+      
+      total_quantity:
+        type: sum
+        sql: quantity
+        description: Total quantity sold
+      
+      total_revenue:
+        type: sum
+        sql: total_price
+        description: Total revenue from order items
+        format: currency
+      
+      average_item_value:
+        type: avg
+        sql: total_price
+        description: Average order item value
+        format: currency
+      
+      total_discount:
+        type: sum
+        sql: discount
+        description: Total discounts on items
+        format: currency
+    
+    relationships:
+      order:
+        type: belongs_to
+        cube: orders
+        foreign_key: order_id
+      
+      product:
+        type: belongs_to
+        cube: products
+        foreign_key: product_id
+

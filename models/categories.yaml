@@ -1,0 +1,27 @@
+cubes:
+  - name: categories
+    table: categories
+    description: Product categories cube
+    
+    dimensions:
+      id:
+        type: number
+        primary_key: true
+        sql: id
+      
+      name:
+        type: string
+        sql: name
+        description: Category name
+      
+      created_at:
+        type: time
+        sql: created_at
+        description: Category creation date
+    
+    measures:
+      count:
+        type: count
+        sql: id
+        description: Total number of categories
+

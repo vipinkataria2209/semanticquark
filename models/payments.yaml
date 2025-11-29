@@ -1,0 +1,61 @@
+cubes:
+  - name: payments
+    table: payments
+    description: Payments cube
+    
+    dimensions:
+      id:
+        type: number
+        primary_key: true
+        sql: id
+      
+      order_id:
+        type: number
+        sql: order_id
+        description: Order ID
+      
+      payment_method:
+        type: string
+        sql: payment_method
+        description: Payment method (credit_card, debit_card, paypal, etc.)
+      
+      payment_status:
+        type: string
+        sql: payment_status
+        description: Payment status (pending, processing, completed, failed, refunded)
+      
+      payment_date:
+        type: time
+        sql: payment_date
+        description: Payment date
+        granularities: [day, week, month, quarter, year]
+      
+      transaction_id:
+        type: string
+        sql: transaction_id
+        description: Transaction ID
+    
+    measures:
+      count:
+        type: count
+        sql: id
+        description: Total number of payments
+      
+      total_amount:
+        type: sum
+        sql: amount
+        description: Total payment amount
+        format: currency
+      
+      average_payment:
+        type: avg
+        sql: amount
+        description: Average payment amount
+        format: currency
+    
+    relationships:
+      order:
+        type: belongs_to
+        cube: orders
+        foreign_key: order_id
+

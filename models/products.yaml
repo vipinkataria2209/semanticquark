@@ -1,0 +1,66 @@
+cubes:
+  - name: products
+    table: products
+    description: Products cube
+    
+    dimensions:
+      id:
+        type: number
+        primary_key: true
+        sql: id
+      
+      name:
+        type: string
+        sql: name
+        description: Product name
+      
+      sku:
+        type: string
+        sql: sku
+        description: Product SKU
+      
+      category_id:
+        type: number
+        sql: category_id
+        description: Product category ID
+      
+      is_active:
+        type: boolean
+        sql: is_active
+        description: Whether product is active
+      
+      created_at:
+        type: time
+        sql: created_at
+        description: Product creation date
+        granularities: [day, week, month, quarter, year]
+    
+    measures:
+      count:
+        type: count
+        sql: id
+        description: Total number of products
+      
+      total_stock:
+        type: sum
+        sql: stock_quantity
+        description: Total stock quantity
+      
+      average_price:
+        type: avg
+        sql: price
+        description: Average product price
+        format: currency
+      
+      total_value:
+        type: sum
+        sql: "price * stock_quantity"
+        description: Total inventory value
+        format: currency
+    
+    relationships:
+      category:
+        type: belongs_to
+        cube: categories
+        foreign_key: category_id
+

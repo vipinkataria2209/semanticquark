@@ -1,0 +1,75 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: semanticquark_postgres
+    environment:
+      POSTGRES_USER: semanticquark
+      POSTGRES_PASSWORD: semanticquark123
+      POSTGRES_DB: semanticquark_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init_db_large.sql:/docker-entrypoint-initdb.d/init_db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U semanticquark"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - semanticquark_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: semanticquark_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - semanticquark_network
+
+  semanticquark:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: semanticquark_app
+    environment:
+      - DATABASE_URL=postgresql://semanticquark:semanticquark123@postgres:5432/semanticquark_db
+      - REDIS_URL=redis://redis:6379/0
+      - CACHE_ENABLED=true
+      - CACHE_TYPE=redis
+      - AUTH_ENABLED=false
+      - PRE_AGGREGATIONS_ENABLED=true
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - API_DEBUG=true
+      - MODELS_PATH=/app/models
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/app/models
+      - ./semantic_layer:/app/semantic_layer
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - semanticquark_network
+    command: uvicorn semantic_layer.api.main:app --host 0.0.0.0 --port 8000 --reload
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  semanticquark_network:
+    driver: bridge
+

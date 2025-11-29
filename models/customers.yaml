@@ -1,0 +1,53 @@
+cubes:
+  - name: customers
+    table: customers
+    description: Customers cube
+    
+    dimensions:
+      id:
+        type: number
+        primary_key: true
+        sql: id
+      
+      first_name:
+        type: string
+        sql: first_name
+        description: Customer first name
+      
+      last_name:
+        type: string
+        sql: last_name
+        description: Customer last name
+      
+      email:
+        type: string
+        sql: email
+        description: Customer email address
+      
+      city:
+        type: string
+        sql: city
+        description: Customer city
+      
+      state:
+        type: string
+        sql: state
+        description: Customer state
+      
+      country:
+        type: string
+        sql: country
+        description: Customer country
+      
+      created_at:
+        type: time
+        sql: created_at
+        description: Customer registration date
+        granularities: [day, week, month, quarter, year]
+    
+    measures:
+      count:
+        type: count
+        sql: id
+        description: Total number of customers
+
