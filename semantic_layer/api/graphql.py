@@ -13,9 +13,9 @@ except ImportError:
     GraphQLRouter = None
     strawberry = None
 
-from semantic_layer.engine.query_engine import QueryEngine
+from semantic_layer.orchestrator import QueryEngine
 from semantic_layer.exceptions import ExecutionError
-from semantic_layer.models.schema import Schema
+from semantic_layer.schema import Schema
 from semantic_layer.query.parser import QueryParser
 from semantic_layer.query.query import Query
 

@@ -6,11 +6,11 @@ from fastapi import HTTPException, Request, Depends
 from pydantic import BaseModel
 
 from semantic_layer.auth.base import SecurityContext
-from semantic_layer.connectors.base import BaseConnector
-from semantic_layer.engine.query_engine import QueryEngine
+from semantic_layer.drivers.base_driver import BaseDriver
+from semantic_layer.orchestrator import QueryEngine
 from semantic_layer.exceptions import ExecutionError
-from semantic_layer.models.schema import Schema
-from semantic_layer.query_builder.sql_builder import SQLBuilder
+from semantic_layer.schema import Schema
+from semantic_layer.sql import SQLBuilder
 from semantic_layer.api.middleware import get_security_context
 
 
@@ -27,7 +27,7 @@ async def execute_sql_query(
 ) -> Dict[str, Any]:
     """Execute raw SQL query (with security checks)."""
     # Get connector from app state
-    connector: Optional[BaseConnector] = getattr(request.app.state, "connector", None)
+    connector: Optional[BaseDriver] = getattr(request.app.state, "connector", None)
     if not connector:
         raise HTTPException(status_code=503, detail="Database connector not available")
     

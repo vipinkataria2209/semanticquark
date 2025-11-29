@@ -14,27 +14,26 @@ from semantic_layer.cache.base import BaseCache
 from semantic_layer.cache.memory import MemoryCache
 from semantic_layer.cache.redis_cache import RedisCache
 from semantic_layer.config import get_settings
-from semantic_layer.connectors.base import BaseConnector, ConnectionConfig
-from semantic_layer.engine.query_engine import QueryEngine
+from semantic_layer.drivers.base_driver import BaseDriver, ConnectionConfig
+from semantic_layer.orchestrator import QueryEngine
 from semantic_layer.exceptions import SemanticLayerError
-from semantic_layer.models.schema import Schema, SchemaLoader
+from semantic_layer.schema import Schema, SchemaLoader
 from semantic_layer.api.middleware import get_security_context, check_authorization
 from semantic_layer.api.graphql import create_graphql_router
 from semantic_layer.api.sql_api import execute_sql_query, SQLQueryRequest
-from semantic_layer.logging.query_logger import QueryLogger
-from semantic_layer.metrics.collector import MetricsCollector
-from semantic_layer.query_builder.sql_builder import SQLBuilder
+from semantic_layer.monitoring import QueryLogger, MetricsCollector
+from semantic_layer.sql import SQLBuilder
 from semantic_layer.utils.file_watcher import FileWatcher
 from semantic_layer.pre_aggregations.manager import PreAggregationManager
 from semantic_layer.pre_aggregations.storage import DatabasePreAggregation
 from semantic_layer.pre_aggregations.scheduler import PreAggregationScheduler
 from semantic_layer.pre_aggregations.base import PreAggregationDefinition
 
-# Import PostgreSQL connector conditionally
+# Import PostgreSQL driver conditionally
 try:
-    from semantic_layer.connectors.postgresql import PostgreSQLConnector
+    from semantic_layer.drivers import PostgresDriver
 except ImportError:
-    PostgreSQLConnector = None
+    PostgresDriver = None
 
 
 # Global state
@@ -42,7 +41,7 @@ query_engine: QueryEngine | None = None
 schema: Schema | None = None
 cache: Optional[BaseCache] = None
 auth: Optional[BaseAuth] = None
-connector: Optional[BaseConnector] = None
+connector: Optional[BaseDriver] = None
 file_watcher: Optional[FileWatcher] = None
 query_logger: Optional[QueryLogger] = None
 metrics_collector: Optional[MetricsCollector] = None
@@ -145,9 +144,9 @@ async def lifespan(app: FastAPI):
         app.state.auth = None
 
     # Initialize connector
-    if PostgreSQLConnector is None:
+    if PostgresDriver is None:
         raise RuntimeError(
-            "PostgreSQL connector not available. Install database dependencies: "
+            "PostgreSQL driver not available. Install database dependencies: "
             "pip install asyncpg sqlalchemy"
         )
     
@@ -156,7 +155,7 @@ async def lifespan(app: FastAPI):
         pool_size=settings.database_pool_size,
         max_overflow=settings.database_max_overflow,
     )
-    connector = PostgreSQLConnector(conn_config)
+    connector = PostgresDriver(conn_config)
     await connector.connect()
     
     # Store connector in app state for SQL API

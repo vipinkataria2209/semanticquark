@@ -2,12 +2,12 @@
 
 from typing import Dict, List, Optional
 
-from semantic_layer.connectors.base import BaseConnector
+from semantic_layer.drivers.base_driver import BaseDriver as BaseConnector
 from semantic_layer.models.cube import Cube
 from semantic_layer.models.schema import Schema
 from semantic_layer.pre_aggregations.base import BasePreAggregation, PreAggregationDefinition
 from semantic_layer.query.query import Query
-from semantic_layer.query_builder.sql_builder import SQLBuilder
+from semantic_layer.sql.builder import SQLBuilder
 
 
 class PreAggregationManager:

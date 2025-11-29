@@ -1,12 +1,27 @@
-"""Database connectors."""
+"""Database connectors (backward compatibility layer)."""
 
-from semantic_layer.connectors.base import BaseConnector, ConnectionConfig
-from semantic_layer.connectors.postgresql import PostgreSQLConnector
+# Backward compatibility: redirect old imports to new location
+import warnings
 
-# Import MySQL connector conditionally
-try:
-    from semantic_layer.connectors.mysql import MySQLConnector
-except ImportError:
-    MySQLConnector = None
+warnings.warn(
+    "semantic_layer.connectors is deprecated. Use semantic_layer.drivers instead.",
+    DeprecationWarning,
+    stacklevel=2
+)
 
-__all__ = ["BaseConnector", "ConnectionConfig", "PostgreSQLConnector", "MySQLConnector"]
+# Import from new location
+from semantic_layer.drivers import (
+    BaseDriver as BaseConnector,
+    ConnectionConfig,
+    PostgresDriver as PostgreSQLConnector,
+    MySQLDriver as MySQLConnector,
+    DriverFactory,
+)
+
+__all__ = [
+    "BaseConnector",
+    "ConnectionConfig",
+    "PostgreSQLConnector",
+    "MySQLConnector",
+    "DriverFactory",
+]

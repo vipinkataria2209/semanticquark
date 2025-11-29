@@ -1,291 +1,338 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1400" style="background: #ffffff;">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 1350" width="1000" height="1400">
   <defs>
-    <!-- Subtle pattern for visual interest -->
-    <pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-      <circle cx="2" cy="2" r="1" fill="#e5e7eb" />
-    </pattern>
+    <!-- Gradient backgrounds for each layer -->
+    <linearGradient id="layer1Gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6366F1;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="layer2Gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#7C3AED;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="layer3Gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#F59E0B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FBBF24;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="layer4Gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#10B981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#34D399;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="layer5Gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#EF4444;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F87171;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="layer6Gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#0891B2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#06B6D4;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Box gradients -->
+    <linearGradient id="boxGradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#EEF2FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E0E7FF;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="boxGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FAF5FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F3E8FF;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="boxGradient3" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFBEB;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FEF3C7;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="boxGradient4" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ECFDF5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#D1FAE5;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="boxGradient5" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FEF2F2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FEE2E2;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="boxGradient6" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#F0FDFA;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#CFFAFE;stop-opacity:1" />
+    </linearGradient>
     
     <!-- Arrow marker -->
-    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-      <polygon points="0 0, 10 3, 0 6" fill="#000000" />
+    <marker id="arrowhead" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
+      <polygon points="0 0, 12 4, 0 8" fill="#1F2937" stroke="#1F2937" stroke-width="1"/>
     </marker>
     
     <!-- Drop shadow -->
     <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.08"/>
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.15"/>
     </filter>
   </defs>
   
-  <!-- Background pattern -->
-  <rect x="0" y="0" width="1000" height="1400" fill="url(#dots)"/>
+  <!-- White background -->
+  <rect x="0" y="0" width="1000" height="1400" fill="#FFFFFF"/>
   
   <!-- Title -->
-  <text x="500" y="40" font-family="'Courier New', monospace" font-size="26" font-weight="bold" text-anchor="middle" fill="#000000">
-    SIX-LAYER ARCHITECTURE PATTERN
+  <text x="500" y="45" font-family="Arial, sans-serif" font-size="28" font-weight="bold" text-anchor="middle" fill="#1F2937">
+    SemanticQuark Architecture
   </text>
-  <line x1="250" y1="50" x2="750" y2="50" stroke="#000000" stroke-width="2"/>
+  <text x="500" y="70" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#6B7280">
+    Six-Layer Enterprise Data Analytics Framework
+  </text>
   
   <!-- LAYER 1: API LAYER -->
   <g filter="url(#shadow)">
-    <rect x="100" y="80" width="800" height="160" rx="0" fill="#ffffff" stroke="#000000" stroke-width="3"/>
-    <!-- Corner accents -->
-    <path d="M 100 80 L 120 80 L 100 100 Z" fill="#000000"/>
-    <path d="M 900 80 L 880 80 L 900 100 Z" fill="#000000"/>
+    <rect x="100" y="100" width="800" height="160" rx="10" fill="#FFFFFF" stroke="#4F46E5" stroke-width="3"/>
     
-    <rect x="110" y="90" width="780" height="30" fill="#000000"/>
-    <text x="500" y="112" font-family="'Courier New', monospace" font-size="15" font-weight="bold" text-anchor="middle" fill="#ffffff">
-      LAYER 1: API LAYER
+    <rect x="110" y="110" width="780" height="35" rx="6" fill="url(#layer1Gradient)"/>
+    <text x="145" y="133" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="start" fill="#FFFFFF">
+      Layer 1: API Layer
     </text>
     
     <!-- API boxes -->
-    <rect x="130" y="135" width="230" height="90" rx="0" fill="#ffffff" stroke="#000000" stroke-width="2"/>
-    <text x="245" y="155" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#000000">
-      FastAPI REST Endpoints
+    <rect x="130" y="160" width="230" height="85" rx="6" fill="url(#boxGradient1)" stroke="#4F46E5" stroke-width="2"/>
+    <text x="245" y="180" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#4F46E5">
+      FastAPI REST
     </text>
-    <text x="140" y="175" font-family="'Courier New', monospace" font-size="10" fill="#333333">
+    <text x="140" y="200" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
       → POST /api/v1/query
     </text>
-    <text x="140" y="193" font-family="'Courier New', monospace" font-size="10" fill="#333333">
+    <text x="140" y="217" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
       → GET /api/v1/schema
     </text>
-    <text x="140" y="211" font-family="'Courier New', monospace" font-size="10" fill="#333333">
+    <text x="140" y="234" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
       → GET /health
     </text>
     
-    <rect x="385" y="135" width="230" height="90" rx="0" fill="#ffffff" stroke="#000000" stroke-width="2"/>
-    <text x="500" y="155" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#000000">
-      GraphQL Endpoint
+    <rect x="385" y="160" width="230" height="85" rx="6" fill="url(#boxGradient1)" stroke="#4F46E5" stroke-width="2"/>
+    <text x="500" y="180" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#4F46E5">
+      GraphQL
     </text>
-    <text x="395" y="180" font-family="'Courier New', monospace" font-size="10" fill="#333333">
+    <text x="395" y="205" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
       → POST /graphql
     </text>
-    <text x="395" y="198" font-family="Arial, sans-serif" font-size="9" fill="#666666">
-      flexible query interface
+    <text x="395" y="222" font-family="Arial, sans-serif" font-size="9" fill="#475569">
+      Flexible query interface
     </text>
     
-    <rect x="640" y="135" width="230" height="90" rx="0" fill="#ffffff" stroke="#000000" stroke-width="2"/>
-    <text x="755" y="155" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#000000">
-      SQL API Endpoint
+    <rect x="640" y="160" width="230" height="85" rx="6" fill="url(#boxGradient1)" stroke="#4F46E5" stroke-width="2"/>
+    <text x="755" y="180" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#4F46E5">
+      SQL API
     </text>
-    <text x="650" y="180" font-family="'Courier New', monospace" font-size="10" fill="#333333">
+    <text x="650" y="205" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
       → POST /api/v1/sql
     </text>
-    <text x="650" y="198" font-family="Arial, sans-serif" font-size="9" fill="#666666">
-      direct SQL execution
+    <text x="650" y="222" font-family="Arial, sans-serif" font-size="9" fill="#475569">
+      Direct SQL execution
     </text>
   </g>
   
   <!-- Arrow 1 to 2 -->
-  <line x1="500" y1="250" x2="500" y2="285" stroke="#000000" stroke-width="2" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
-  <rect x="410" y="260" width="180" height="18" fill="#ffffff"/>
-  <text x="500" y="272" font-family="'Courier New', monospace" font-size="10" text-anchor="middle" fill="#000000">HTTP Request (JSON)</text>
+  <line x1="500" y1="270" x2="500" y2="305" stroke="#1F2937" stroke-width="2.5" marker-end="url(#arrowhead)" stroke-dasharray="6,4"/>
+  <rect x="410" y="280" width="180" height="20" rx="10" fill="#4F46E5"/>
+  <text x="500" y="294" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#FFFFFF">HTTP Request (JSON)</text>
   
   <!-- LAYER 2: QUERY PROCESSING -->
   <g filter="url(#shadow)">
-    <rect x="100" y="295" width="800" height="160" rx="0" fill="#ffffff" stroke="#000000" stroke-width="3"/>
-    <path d="M 100 295 L 120 295 L 100 315 Z" fill="#000000"/>
-    <path d="M 900 295 L 880 295 L 900 315 Z" fill="#000000"/>
+    <rect x="100" y="315" width="800" height="160" rx="10" fill="#FFFFFF" stroke="#7C3AED" stroke-width="3"/>
     
-    <rect x="110" y="305" width="780" height="30" fill="#000000"/>
-    <text x="500" y="327" font-family="'Courier New', monospace" font-size="15" font-weight="bold" text-anchor="middle" fill="#ffffff">
-      LAYER 2: QUERY PROCESSING LAYER
+    <rect x="110" y="325" width="780" height="35" rx="6" fill="url(#layer2Gradient)"/>
+    <text x="145" y="348" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="start" fill="#FFFFFF">
+      Layer 2: Query Processing
     </text>
     
-    <rect x="130" y="350" width="230" height="90" rx="0" fill="#ffffff" stroke="#000000" stroke-width="2"/>
-    <text x="245" y="370" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#000000">
-      Query Parser &amp; Validator
+    <rect x="130" y="375" width="230" height="85" rx="6" fill="url(#boxGradient2)" stroke="#7C3AED" stroke-width="2"/>
+    <text x="245" y="395" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#7C3AED">
+      Parser &amp; Validator
     </text>
-    <text x="140" y="390" font-family="'Courier New', monospace" font-size="10" fill="#333333">
+    <text x="140" y="415" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
       → Parse JSON to Query
     </text>
-    <text x="140" y="408" font-family="'Courier New', monospace" font-size="10" fill="#333333">
+    <text x="140" y="432" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
       → Validate structure
     </text>
-    <text x="140" y="426" font-family="'Courier New', monospace" font-size="10" fill="#333333">
+    <text x="140" y="449" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
       → Resolve semantic refs
     </text>
     
-    <rect x="385" y="350" width="230" height="90" rx="0" fill="#ffffff" stroke="#000000" stroke-width="2"/>
-    <text x="500" y="370" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#000000">
+    <rect x="385" y="375" width="230" height="85" rx="6" fill="url(#boxGradient2)" stroke="#7C3AED" stroke-width="2"/>
+    <text x="500" y="395" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#7C3AED">
       Query Optimizer
     </text>
-    <text x="395" y="390" font-family="'Courier New', monospace" font-size="10" fill="#333333">
+    <text x="395" y="415" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
       → Remove duplicates
     </text>
-    <text x="395" y="408" font-family="'Courier New', monospace" font-size="10" fill="#333333">
+    <text x="395" y="432" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
       → Optimize filters
     </text>
-    <text x="395" y="426" font-family="'Courier New', monospace" font-size="10" fill="#333333">
+    <text x="395" y="449" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
       → Predicate pushdown
     </text>
     
-    <rect x="640" y="350" width="230" height="90" rx="0" fill="#ffffff" stroke="#000000" stroke-width="2"/>
-    <text x="755" y="370" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#000000">
+    <rect x="640" y="375" width="230" height="85" rx="6" fill="url(#boxGradient2)" stroke="#7C3AED" stroke-width="2"/>
+    <text x="755" y="395" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#7C3AED">
       Cache Manager
     </text>
-    <text x="650" y="390" font-family="'Courier New', monospace" font-size="10" fill="#333333">
+    <text x="650" y="415" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
       → Check cache
     </text>
-    <text x="650" y="408" font-family="'Courier New', monospace" font-size="10" fill="#333333">
+    <text x="650" y="432" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
       → Store results
     </text>
-    <text x="650" y="426" font-family="'Courier New', monospace" font-size="10" fill="#333333">
+    <text x="650" y="449" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
       → Redis + In-Memory
     </text>
   </g>
   
   <!-- Arrow 2 to 3 -->
-  <line x1="500" y1="465" x2="500" y2="500" stroke="#000000" stroke-width="2" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
-  <rect x="390" y="475" width="220" height="18" fill="#ffffff"/>
-  <text x="500" y="487" font-family="'Courier New', monospace" font-size="10" text-anchor="middle" fill="#000000">Validated Query Object</text>
+  <line x1="500" y1="485" x2="500" y2="520" stroke="#1F2937" stroke-width="2.5" marker-end="url(#arrowhead)" stroke-dasharray="6,4"/>
+  <rect x="390" y="495" width="220" height="20" rx="10" fill="#7C3AED"/>
+  <text x="500" y="509" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Validated Query Object</text>
   
   <!-- LAYER 3: SEMANTIC MODEL -->
   <g filter="url(#shadow)">
-    <rect x="100" y="510" width="800" height="160" rx="0" fill="#ffffff" stroke="#000000" stroke-width="3"/>
-    <path d="M 100 510 L 120 510 L 100 530 Z" fill="#000000"/>
-    <path d="M 900 510 L 880 510 L 900 530 Z" fill="#000000"/>
+    <rect x="100" y="530" width="800" height="160" rx="10" fill="#FFFFFF" stroke="#F59E0B" stroke-width="3"/>
     
-    <rect x="110" y="520" width="780" height="30" fill="#000000"/>
-    <text x="500" y="542" font-family="'Courier New', monospace" font-size="15" font-weight="bold" text-anchor="middle" fill="#ffffff">
-      LAYER 3: SEMANTIC MODEL LAYER
+    <rect x="110" y="540" width="780" height="35" rx="6" fill="url(#layer3Gradient)"/>
+    <text x="145" y="563" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="start" fill="#FFFFFF">
+      Layer 3: Semantic Model
     </text>
     
-    <rect x="130" y="565" width="370" height="90" rx="0" fill="#ffffff" stroke="#000000" stroke-width="2"/>
-    <text x="315" y="585" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#000000">
+    <rect x="130" y="590" width="370" height="85" rx="6" fill="url(#boxGradient3)" stroke="#F59E0B" stroke-width="2"/>
+    <text x="315" y="610" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#F59E0B">
       Schema Manager
     </text>
-    <text x="140" y="605" font-family="'Courier New', monospace" font-size="10" fill="#333333">
+    <text x="140" y="630" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
       → Load YAML definitions
     </text>
-    <text x="140" y="623" font-family="'Courier New', monospace" font-size="10" fill="#333333">
-      → Manage cubes, dimensions, measures
+    <text x="140" y="647" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
+      → Manage cubes, dimensions
     </text>
-    <text x="140" y="641" font-family="'Courier New', monospace" font-size="10" fill="#333333">
-      → Resolve relationships • Hot reload
+    <text x="140" y="664" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
+      → Resolve relationships
     </text>
     
-    <rect x="525" y="565" width="345" height="90" rx="0" fill="#ffffff" stroke="#000000" stroke-width="2"/>
-    <text x="697" y="585" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#000000">
+    <rect x="525" y="590" width="345" height="85" rx="6" fill="url(#boxGradient3)" stroke="#F59E0B" stroke-width="2"/>
+    <text x="697" y="610" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#F59E0B">
       Pre-Aggregation Manager
     </text>
-    <text x="535" y="605" font-family="'Courier New', monospace" font-size="10" fill="#333333">
+    <text x="535" y="630" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
       → Route to pre-aggregations
     </text>
-    <text x="535" y="623" font-family="'Courier New', monospace" font-size="10" fill="#333333">
-      → Manage materialized tables
+    <text x="535" y="647" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
+      → Materialized tables
     </text>
-    <text x="535" y="641" font-family="'Courier New', monospace" font-size="10" fill="#333333">
+    <text x="535" y="664" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
       → Schedule refresh
     </text>
   </g>
   
   <!-- Arrow 3 to 4 -->
-  <line x1="500" y1="680" x2="500" y2="715" stroke="#000000" stroke-width="2" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
-  <rect x="375" y="690" width="250" height="18" fill="#ffffff"/>
-  <text x="500" y="702" font-family="'Courier New', monospace" font-size="10" text-anchor="middle" fill="#000000">Resolved Semantic Objects</text>
+  <line x1="500" y1="700" x2="500" y2="735" stroke="#1F2937" stroke-width="2.5" marker-end="url(#arrowhead)" stroke-dasharray="6,4"/>
+  <rect x="375" y="710" width="250" height="20" rx="10" fill="#F59E0B"/>
+  <text x="500" y="724" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Resolved Semantic Objects</text>
   
   <!-- LAYER 4: SQL GENERATION -->
   <g filter="url(#shadow)">
-    <rect x="100" y="725" width="800" height="145" rx="0" fill="#ffffff" stroke="#000000" stroke-width="3"/>
-    <path d="M 100 725 L 120 725 L 100 745 Z" fill="#000000"/>
-    <path d="M 900 725 L 880 725 L 900 745 Z" fill="#000000"/>
+    <rect x="100" y="745" width="800" height="145" rx="10" fill="#FFFFFF" stroke="#10B981" stroke-width="3"/>
     
-    <rect x="110" y="735" width="780" height="30" fill="#000000"/>
-    <text x="500" y="757" font-family="'Courier New', monospace" font-size="15" font-weight="bold" text-anchor="middle" fill="#ffffff">
-      LAYER 4: SQL GENERATION LAYER
+    <rect x="110" y="755" width="780" height="35" rx="6" fill="url(#layer4Gradient)"/>
+    <text x="145" y="778" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="start" fill="#FFFFFF">
+      Layer 4: SQL Generation
     </text>
     
-    <rect x="130" y="780" width="740" height="75" rx="0" fill="#ffffff" stroke="#000000" stroke-width="2"/>
-    <text x="500" y="800" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#000000">
+    <rect x="130" y="805" width="740" height="70" rx="6" fill="url(#boxGradient4)" stroke="#10B981" stroke-width="2"/>
+    <text x="500" y="825" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#10B981">
       SQL Builder
     </text>
-    <text x="140" y="820" font-family="'Courier New', monospace" font-size="10" fill="#333333">
-      → Generate SELECT (dimensions + measures) • Generate FROM (tables + JOINs)
+    <text x="140" y="845" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
+      → Generate SELECT (dimensions + measures) • FROM (tables + JOINs)
     </text>
-    <text x="140" y="838" font-family="'Courier New', monospace" font-size="10" fill="#333333">
-      → Generate WHERE (filters + RLS) • Generate GROUP BY • Optimize structure
+    <text x="140" y="862" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
+      → WHERE (filters + RLS) • GROUP BY • Optimize structure
     </text>
   </g>
   
   <!-- Arrow 4 to 5 -->
-  <line x1="500" y1="880" x2="500" y2="915" stroke="#000000" stroke-width="2" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
-  <rect x="405" y="890" width="190" height="18" fill="#ffffff"/>
-  <text x="500" y="902" font-family="'Courier New', monospace" font-size="10" text-anchor="middle" fill="#000000">Generated SQL String</text>
+  <line x1="500" y1="900" x2="500" y2="935" stroke="#1F2937" stroke-width="2.5" marker-end="url(#arrowhead)" stroke-dasharray="6,4"/>
+  <rect x="405" y="910" width="190" height="20" rx="10" fill="#10B981"/>
+  <text x="500" y="924" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Generated SQL String</text>
   
   <!-- LAYER 5: DATABASE LAYER -->
   <g filter="url(#shadow)">
-    <rect x="100" y="925" width="800" height="135" rx="0" fill="#ffffff" stroke="#000000" stroke-width="3"/>
-    <path d="M 100 925 L 120 925 L 100 945 Z" fill="#000000"/>
-    <path d="M 900 925 L 880 925 L 900 945 Z" fill="#000000"/>
+    <rect x="100" y="945" width="800" height="135" rx="10" fill="#FFFFFF" stroke="#EF4444" stroke-width="3"/>
     
-    <rect x="110" y="935" width="780" height="30" fill="#000000"/>
-    <text x="500" y="957" font-family="'Courier New', monospace" font-size="15" font-weight="bold" text-anchor="middle" fill="#ffffff">
-      LAYER 5: DATABASE LAYER
+    <rect x="110" y="955" width="780" height="35" rx="6" fill="url(#layer5Gradient)"/>
+    <text x="145" y="978" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="start" fill="#FFFFFF">
+      Layer 5: Database Connector
     </text>
     
-    <rect x="130" y="980" width="740" height="65" rx="0" fill="#ffffff" stroke="#000000" stroke-width="2"/>
-    <text x="500" y="1000" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#000000">
-      Database Connector (asyncpg for PostgreSQL)
+    <rect x="130" y="1005" width="740" height="60" rx="6" fill="url(#boxGradient5)" stroke="#EF4444" stroke-width="2"/>
+    <text x="500" y="1025" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#EF4444">
+      Database Connector (asyncpg)
     </text>
-    <text x="140" y="1020" font-family="'Courier New', monospace" font-size="10" fill="#333333">
+    <text x="140" y="1045" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
       → Connection pool • Async execution • Error handling • Result formatting
     </text>
-    <text x="140" y="1035" font-family="'Courier New', monospace" font-size="10" fill="#333333">
-      → Multi-database support (MySQL, PostgreSQL, etc.)
+    <text x="140" y="1058" font-family="Courier New, monospace" font-size="9" fill="#1E293B">
+      → Multi-database support (PostgreSQL, MySQL, Snowflake, etc.)
     </text>
   </g>
   
   <!-- Arrow 5 to 6 -->
-  <line x1="500" y1="1070" x2="500" y2="1105" stroke="#000000" stroke-width="2" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
-  <rect x="405" y="1080" width="190" height="18" fill="#ffffff"/>
-  <text x="500" y="1092" font-family="'Courier New', monospace" font-size="10" text-anchor="middle" fill="#000000">Database Interaction</text>
+  <line x1="500" y1="1090" x2="500" y2="1125" stroke="#1F2937" stroke-width="2.5" marker-end="url(#arrowhead)" stroke-dasharray="6,4"/>
+  <rect x="405" y="1100" width="190" height="20" rx="10" fill="#EF4444"/>
+  <text x="500" y="1114" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Database Interaction</text>
   
-  <!-- LAYER 6: POSTGRESQL DATABASE -->
+  <!-- LAYER 6: DATABASE -->
   <g filter="url(#shadow)">
-    <rect x="100" y="1115" width="800" height="160" rx="0" fill="#ffffff" stroke="#000000" stroke-width="3"/>
-    <path d="M 100 1115 L 120 1115 L 100 1135 Z" fill="#000000"/>
-    <path d="M 900 1115 L 880 1115 L 900 1135 Z" fill="#000000"/>
+    <rect x="100" y="1135" width="800" height="160" rx="10" fill="#FFFFFF" stroke="#0891B2" stroke-width="3"/>
     
-    <rect x="110" y="1125" width="780" height="30" fill="#000000"/>
-    <text x="500" y="1147" font-family="'Courier New', monospace" font-size="15" font-weight="bold" text-anchor="middle" fill="#ffffff">
-      LAYER 6: POSTGRESQL DATABASE
+    <rect x="110" y="1145" width="780" height="35" rx="6" fill="url(#layer6Gradient)"/>
+    <text x="145" y="1168" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="start" fill="#FFFFFF">
+      Layer 6: SQL Database
     </text>
     
-    <!-- Database icon elements -->
+    <!-- Database icon elements with color -->
     <g>
-      <rect x="180" y="1175" width="160" height="80" rx="0" fill="#ffffff" stroke="#000000" stroke-width="2"/>
-      <ellipse cx="260" cy="1175" rx="80" ry="12" fill="#ffffff" stroke="#000000" stroke-width="2"/>
-      <text x="260" y="1220" font-family="'Courier New', monospace" font-size="14" font-weight="bold" text-anchor="middle" fill="#000000">
+      <rect x="180" y="1195" width="160" height="80" rx="6" fill="url(#boxGradient6)" stroke="#0891B2" stroke-width="2"/>
+      <ellipse cx="260" cy="1195" rx="80" ry="12" fill="#99F6E4" stroke="#0891B2" stroke-width="2"/>
+      <text x="260" y="1240" font-family="Courier New, monospace" font-size="14" font-weight="bold" text-anchor="middle" fill="#0891B2">
         orders
       </text>
-      <text x="260" y="1240" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#666666">
+      <text x="260" y="1260" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#164E63">
         table
       </text>
     </g>
     
     <g>
-      <rect x="380" y="1175" width="160" height="80" rx="0" fill="#ffffff" stroke="#000000" stroke-width="2"/>
-      <ellipse cx="460" cy="1175" rx="80" ry="12" fill="#ffffff" stroke="#000000" stroke-width="2"/>
-      <text x="460" y="1220" font-family="'Courier New', monospace" font-size="14" font-weight="bold" text-anchor="middle" fill="#000000">
+      <rect x="380" y="1195" width="160" height="80" rx="6" fill="url(#boxGradient6)" stroke="#0891B2" stroke-width="2"/>
+      <ellipse cx="460" cy="1195" rx="80" ry="12" fill="#99F6E4" stroke="#0891B2" stroke-width="2"/>
+      <text x="460" y="1240" font-family="Courier New, monospace" font-size="14" font-weight="bold" text-anchor="middle" fill="#0891B2">
         customers
       </text>
-      <text x="460" y="1240" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#666666">
+      <text x="460" y="1260" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#164E63">
         table
       </text>
     </g>
     
     <g>
-      <rect x="580" y="1175" width="160" height="80" rx="0" fill="#ffffff" stroke="#000000" stroke-width="2"/>
-      <ellipse cx="660" cy="1175" rx="80" ry="12" fill="#ffffff" stroke="#000000" stroke-width="2"/>
-      <text x="660" y="1220" font-family="'Courier New', monospace" font-size="14" font-weight="bold" text-anchor="middle" fill="#000000">
+      <rect x="580" y="1195" width="160" height="80" rx="6" fill="url(#boxGradient6)" stroke="#0891B2" stroke-width="2"/>
+      <ellipse cx="660" cy="1195" rx="80" ry="12" fill="#99F6E4" stroke="#0891B2" stroke-width="2"/>
+      <text x="660" y="1240" font-family="Courier New, monospace" font-size="14" font-weight="bold" text-anchor="middle" fill="#0891B2">
         products
       </text>
-      <text x="660" y="1240" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#666666">
+      <text x="660" y="1260" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#164E63">
         table
       </text>
     </g>
     
-    <text x="790" y="1215" font-family="'Courier New', monospace" font-size="20" font-weight="bold" text-anchor="middle" fill="#000000">
+    <text x="790" y="1235" font-family="Courier New, monospace" font-size="24" font-weight="bold" text-anchor="middle" fill="#0891B2">
       ...
     </text>
   </g>

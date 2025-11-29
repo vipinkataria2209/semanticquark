@@ -1,0 +1,149 @@
+<svg width="1328" height="531" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1328" height="531" fill="#f8f9fa"/>
+  
+  <!-- Title -->
+  <text x="664" y="30" font-family="Arial, sans-serif" font-size="22" font-weight="bold" text-anchor="middle" fill="#1a1a1a">
+    SemanticQuark: Semantic Layer Framework for Data Analytics
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="664" y="52" font-family="Arial, sans-serif" font-size="13" text-anchor="middle" fill="#666">
+    Automated Business-to-SQL Query Translation for Enterprise Data Analytics
+  </text>
+  
+  <!-- Main Flow Container -->
+  <g id="main-flow">
+    
+    <!-- LEFT: INPUT SECTION -->
+    <g id="input-section">
+      <!-- Business User Icon -->
+      <circle cx="100" cy="160" r="40" fill="#4CAF50" stroke="#2E7D32" stroke-width="2"/>
+      <text x="100" y="165" font-family="Arial, sans-serif" font-size="32" text-anchor="middle" fill="white">👤</text>
+      <text x="100" y="220" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#2E7D32">Business Analyst</text>
+      <text x="100" y="235" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">(No SQL Knowledge)</text>
+      
+      <!-- Business Query Box -->
+      <rect x="20" y="255" width="160" height="125" rx="8" fill="#E8F5E9" stroke="#4CAF50" stroke-width="2"/>
+      <text x="100" y="273" font-family="Arial, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#2E7D32">JSON Query</text>
+      
+      <text x="30" y="290" font-family="Courier New, monospace" font-size="8.5" fill="#1a1a1a">{</text>
+      <text x="30" y="302" font-family="Courier New, monospace" font-size="8.5" fill="#1a1a1a">  "dimensions":</text>
+      <text x="30" y="314" font-family="Courier New, monospace" font-size="8.5" fill="#1976D2">    ["region_name"],</text>
+      <text x="30" y="326" font-family="Courier New, monospace" font-size="8.5" fill="#1a1a1a">  "measures":</text>
+      <text x="30" y="338" font-family="Courier New, monospace" font-size="8.5" fill="#D32F2F">    ["avg_value"],</text>
+      <text x="30" y="350" font-family="Courier New, monospace" font-size="8.5" fill="#1a1a1a">  "filters": {...}</text>
+      <text x="30" y="362" font-family="Courier New, monospace" font-size="8.5" fill="#1a1a1a">}</text>
+    </g>
+    
+    <!-- ARROW 1: Input to Framework -->
+    <path d="M 180 315 L 225 315" stroke="#FF6B6B" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+    <text x="202" y="308" font-family="Arial, sans-serif" font-size="11" fill="#FF6B6B" font-weight="bold">➊</text>
+    
+    <!-- CENTER: SEMANTICQUARK FRAMEWORK - 6 LAYERS -->
+    <g id="framework-core">
+      <!-- Main Framework Box -->
+      <rect x="225" y="78" width="635" height="410" rx="10" fill="white" stroke="#1976D2" stroke-width="3"/>
+      
+      <!-- Framework Title Bar -->
+      <rect x="225" y="78" width="635" height="38" rx="10" fill="#1976D2"/>
+      <text x="542" y="102" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">⚛️ SemanticQuark - Six-Layer Architecture</text>
+      
+      <!-- LAYER 1: API LAYER -->
+      <g id="layer1">
+        <rect x="245" y="128" width="595" height="50" rx="6" fill="#E3F2FD" stroke="#1976D2" stroke-width="2"/>
+        <circle cx="265" cy="153" r="14" fill="#1976D2"/>
+        <text x="265" y="158" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">1</text>
+        <text x="288" y="145" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#1565C0">API Layer</text>
+        <text x="288" y="160" font-family="Arial, sans-serif" font-size="9" fill="#424242">REST API • GraphQL API • SQL API (FastAPI)</text>
+        <text x="288" y="172" font-family="Arial, sans-serif" font-size="8" fill="#666">→ HTTP Request Handling, Authentication, Authorization</text>
+      </g>
+      
+      <!-- LAYER 2: QUERY PROCESSING LAYER -->
+      <g id="layer2">
+        <rect x="245" y="188" width="595" height="50" rx="6" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="2"/>
+        <circle cx="265" cy="213" r="14" fill="#7B1FA2"/>
+        <text x="265" y="218" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">2</text>
+        <text x="288" y="205" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#6A1B9A">Query Processing Layer</text>
+        <text x="288" y="220" font-family="Arial, sans-serif" font-size="9" fill="#424242">Parser • Validator • Optimizer • Cache Manager</text>
+        <text x="288" y="232" font-family="Arial, sans-serif" font-size="8" fill="#666">→ JSON Parsing, Query Validation, Redis Caching</text>
+      </g>
+      
+      <!-- LAYER 3: SEMANTIC MODEL LAYER -->
+      <g id="layer3">
+        <rect x="245" y="248" width="595" height="50" rx="6" fill="#FFF3E0" stroke="#F57C00" stroke-width="2"/>
+        <circle cx="265" cy="273" r="14" fill="#F57C00"/>
+        <text x="265" y="278" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">3</text>
+        <text x="288" y="265" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#E65100">Semantic Model Layer</text>
+        <text x="288" y="280" font-family="Arial, sans-serif" font-size="9" fill="#424242">YAML Schema • Cubes • Dimensions • Measures • Relationships</text>
+        <text x="288" y="292" font-family="Arial, sans-serif" font-size="8" fill="#666">→ Business Logic Definitions, Pre-Aggregation Management</text>
+      </g>
+      
+      <!-- LAYER 4: SQL GENERATION LAYER -->
+      <g id="layer4">
+        <rect x="245" y="308" width="595" height="50" rx="6" fill="#E8F5E9" stroke="#388E3C" stroke-width="2"/>
+        <circle cx="265" cy="333" r="14" fill="#388E3C"/>
+        <text x="265" y="338" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">4</text>
+        <text x="288" y="325" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#2E7D32">SQL Generation Layer</text>
+        <text x="288" y="340" font-family="Arial, sans-serif" font-size="9" fill="#424242">SQL Builder • Query Optimizer • PostgreSQL-Specific Features</text>
+        <text x="288" y="352" font-family="Arial, sans-serif" font-size="8" fill="#666">→ SELECT, FROM+JOINs, WHERE+RLS, GROUP BY, CTEs, Materialized Views</text>
+      </g>
+      
+      <!-- LAYER 5: DATABASE LAYER -->
+      <g id="layer5">
+        <rect x="245" y="368" width="595" height="50" rx="6" fill="#FCE4EC" stroke="#C2185B" stroke-width="2"/>
+        <circle cx="265" cy="393" r="14" fill="#C2185B"/>
+        <text x="265" y="398" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">5</text>
+        <text x="288" y="385" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#AD1457">Database Connector Layer</text>
+        <text x="288" y="400" font-family="Arial, sans-serif" font-size="9" fill="#424242">Async Execution (asyncpg) • Connection Pool • Error Handling</text>
+        <text x="288" y="412" font-family="Arial, sans-serif" font-size="8" fill="#666">→ Asynchronous Query Execution, Result Formatting</text>
+      </g>
+      
+      <!-- LAYER 6: POSTGRESQL DATABASE -->
+      <g id="layer6">
+        <rect x="245" y="428" width="595" height="50" rx="6" fill="#E0F2F1" stroke="#00796B" stroke-width="2"/>
+        <circle cx="265" cy="453" r="14" fill="#00796B"/>
+        <text x="265" y="458" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">6</text>
+        <text x="288" y="445" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#00695C">PostgreSQL Database</text>
+        <text x="288" y="460" font-family="Arial, sans-serif" font-size="9" fill="#424242">Enterprise Data Warehouse</text>
+        <text x="288" y="472" font-family="Arial, sans-serif" font-size="8" fill="#666">→ Normalized Tables • Real-time Analytics • OLAP Queries</text>
+      </g>
+    </g>
+    
+    <!-- ARROW 2: Framework to Output -->
+    <path d="M 860 290 L 905 290" stroke="#FF6B6B" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+    <text x="882" y="283" font-family="Arial, sans-serif" font-size="11" fill="#FF6B6B" font-weight="bold">➋</text>
+    
+    <!-- RIGHT: OUTPUT SECTION -->
+    <g id="output-section">
+      <!-- Optimized SQL Box -->
+      <rect x="905" y="120" width="395" height="145" rx="8" fill="#E8F5E9" stroke="#4CAF50" stroke-width="2"/>
+      <text x="1102" y="140" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#2E7D32">Optimized PostgreSQL Query</text>
+      
+      <text x="915" y="160" font-family="Courier New, monospace" font-size="8" fill="#1a1a1a">SELECT</text>
+      <text x="915" y="173" font-family="Courier New, monospace" font-size="8" fill="#1976D2">  r.region_name,</text>
+      <text x="915" y="186" font-family="Courier New, monospace" font-size="8" fill="#D32F2F">  AVG(m.value) AS avg_value</text>
+      <text x="915" y="199" font-family="Courier New, monospace" font-size="8" fill="#1a1a1a">FROM measurements m</text>
+      <text x="915" y="212" font-family="Courier New, monospace" font-size="8" fill="#1a1a1a">LEFT JOIN sensors s</text>
+      <text x="915" y="225" font-family="Courier New, monospace" font-size="8" fill="#1a1a1a">  ON m.sensor_id = s.sensor_id</text>
+      <text x="915" y="238" font-family="Courier New, monospace" font-size="8" fill="#1a1a1a">LEFT JOIN stations st ...</text>
+      <text x="915" y="251" font-family="Courier New, monospace" font-size="8" fill="#388E3C">GROUP BY r.region_name;</text>
+      
+      <!-- Results Box -->
+      <rect x="905" y="280" width="395" height="130" rx="8" fill="#E3F2FD" stroke="#1976D2" stroke-width="2"/>
+      <text x="1102" y="300" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#1565C0">Query Results</text>
+      <text x="1102" y="340" font-family="Arial, sans-serif" font-size="38" text-anchor="middle">📊</text>
+      
+      <!-- Simple Feature List -->
+      <text x="1102" y="385" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#424242">Validated, Optimized and Executed</text>
+      <text x="1102" y="400" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">Enterprise-Ready Analytics</text>
+    </g>
+  </g>
+  
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#FF6B6B"/>
+    </marker>
+  </defs>
+</svg>
