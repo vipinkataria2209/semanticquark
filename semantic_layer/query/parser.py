@@ -64,7 +64,11 @@ class QueryParser:
                     )
 
             # Parse filters (supports logical operators)
+            # By default, filters go to WHERE clause (dimension filters)
             filters = QueryParser._parse_filters(request_data.get("filters", []))
+            
+            # Parse measure filters separately (go to HAVING clause)
+            measure_filters = QueryParser._parse_filters(request_data.get("measureFilters", []))
 
             # Parse order by
             order_by = []
@@ -90,14 +94,25 @@ class QueryParser:
             limit = request_data.get("limit")
             offset = request_data.get("offset")
 
+            # Parse CTEs (Common Table Expressions)
+            ctes = []
+            for cte_data in request_data.get("ctes", []):
+                if isinstance(cte_data, dict) and "alias" in cte_data and "query" in cte_data:
+                    ctes.append({
+                        "alias": cte_data["alias"],
+                        "query": cte_data["query"]
+                    })
+
             query = Query(
                 dimensions=dimensions,
                 measures=measures,
                 filters=filters,
+                measure_filters=measure_filters,
                 time_dimensions=time_dimensions,
                 order_by=order_by,
                 limit=limit,
                 offset=offset,
+                ctes=ctes,
             )
 
             query.validate()

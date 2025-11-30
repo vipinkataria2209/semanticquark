@@ -33,6 +33,7 @@ class SQLBuilder:
     def __init__(self, schema: Schema):
         """Initialize SQL builder with schema."""
         self.schema = schema
+        self.with_queries: List[Dict[str, str]] = []  # List of CTEs: [{"alias": str, "query": str}]
 
     def build(
         self, query: Query, security_context: Optional[SecurityContext] = None
@@ -147,6 +148,28 @@ class SQLBuilder:
         if group_by_parts:
             group_by_clause = "GROUP BY " + ", ".join(group_by_parts)
 
+        # Build HAVING clause for measure filters
+        having_conditions = []
+        for filter_obj in query.measure_filters:
+            if isinstance(filter_obj, LogicalFilter):
+                # Logical filter (AND/OR) for measures
+                condition = filter_obj.to_sql_condition(self.schema, cube_aliases, is_measure_filter=True)
+                having_conditions.append(condition)
+            else:
+                # Regular QueryFilter for measure
+                measure_name = filter_obj.dimension or filter_obj.member
+                cube, meas_name = self.schema.get_cube_for_measure(measure_name)
+                measure = cube.get_measure(meas_name)
+                table_alias = cube_aliases[cube.name]
+                meas_sql = measure.get_sql_expression(table_alias)
+                # For HAVING, we use the measure SQL expression directly
+                condition = filter_obj.to_sql_condition(meas_sql, dimension_type="number")
+                having_conditions.append(condition)
+        
+        having_clause = ""
+        if having_conditions:
+            having_clause = "HAVING " + " AND ".join(having_conditions)
+
         # Build ORDER BY clause
         order_by_clause = ""
         if query.order_by:
@@ -167,20 +190,47 @@ class SQLBuilder:
             if query.offset:
                 limit_clause += f" OFFSET {query.offset}"
 
+        # Build WITH clause (CTEs)
+        with_clause = self._build_with_clause()
+
         # Assemble SQL
         sql_parts = [
+            with_clause,
             "SELECT",
             ", ".join(select_parts),
             from_clause,
             join_clauses,
             where_clause,
             group_by_clause,
+            having_clause,
             order_by_clause,
             limit_clause,
         ]
 
         sql = " ".join(filter(None, sql_parts))
         return sql
+    
+    def add_with_query(self, alias: str, query: str) -> None:
+        """Add a CTE (Common Table Expression) to the query.
+        
+        Args:
+            alias: The alias name for the CTE
+            query: The SQL query for the CTE
+        """
+        self.with_queries.append({"alias": alias, "query": query})
+    
+    def _build_with_clause(self) -> str:
+        """Build WITH clause from CTEs."""
+        if not self.with_queries:
+            return ""
+        
+        cte_definitions = [
+            f"{cte['alias']} AS ({cte['query']})"
+            for cte in self.with_queries
+        ]
+        newline = '\n'
+        comma_newline = ',\n'
+        return f"WITH{newline}{comma_newline.join(cte_definitions)}{newline}"
 
     def _build_join_plan(
         self, primary_cube_name: str, required_cubes: Set[str]

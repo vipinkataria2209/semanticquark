@@ -26,36 +26,60 @@ class LogicalFilter(BaseModel):
             raise ValueError("Logical filter cannot have both 'or' and 'and' properties")
         return self
     
-    def to_sql_condition(self, schema, cube_aliases) -> str:
-        """Convert logical filter to SQL WHERE condition."""
+    def to_sql_condition(self, schema, cube_aliases, is_measure_filter: bool = False) -> str:
+        """Convert logical filter to SQL WHERE or HAVING condition.
+        
+        Args:
+            schema: Schema object
+            cube_aliases: Dictionary mapping cube names to table aliases
+            is_measure_filter: If True, treat filters as measure filters (for HAVING clause)
+        """
         if self.or_:
             conditions = []
             for filter_item in self.or_:
                 if isinstance(filter_item, LogicalFilter):
-                    conditions.append(f"({filter_item.to_sql_condition(schema, cube_aliases)})")
+                    conditions.append(f"({filter_item.to_sql_condition(schema, cube_aliases, is_measure_filter)})")
                 else:
                     # QueryFilter
-                    dimension_name = filter_item.dimension or filter_item.member
-                    cube, dim_name = schema.get_cube_for_dimension(dimension_name)
-                    dimension = cube.get_dimension(dim_name)
-                    table_alias = cube_aliases[cube.name]
-                    dim_sql = dimension.get_sql_expression(table_alias)
-                    condition = filter_item.to_sql_condition(dim_sql, dimension_type=dimension.type)
+                    member_name = filter_item.dimension or filter_item.member
+                    if is_measure_filter:
+                        # For measure filters, get measure SQL
+                        cube, meas_name = schema.get_cube_for_measure(member_name)
+                        measure = cube.get_measure(meas_name)
+                        table_alias = cube_aliases[cube.name]
+                        member_sql = measure.get_sql_expression(table_alias)
+                        condition = filter_item.to_sql_condition(member_sql, dimension_type="number")
+                    else:
+                        # For dimension filters, get dimension SQL
+                        cube, dim_name = schema.get_cube_for_dimension(member_name)
+                        dimension = cube.get_dimension(dim_name)
+                        table_alias = cube_aliases[cube.name]
+                        member_sql = dimension.get_sql_expression(table_alias)
+                        condition = filter_item.to_sql_condition(member_sql, dimension_type=dimension.type)
                     conditions.append(condition)
             return " OR ".join(conditions)
         elif self.and_:
             conditions = []
             for filter_item in self.and_:
                 if isinstance(filter_item, LogicalFilter):
-                    conditions.append(f"({filter_item.to_sql_condition(schema, cube_aliases)})")
+                    conditions.append(f"({filter_item.to_sql_condition(schema, cube_aliases, is_measure_filter)})")
                 else:
                     # QueryFilter
-                    dimension_name = filter_item.dimension or filter_item.member
-                    cube, dim_name = schema.get_cube_for_dimension(dimension_name)
-                    dimension = cube.get_dimension(dim_name)
-                    table_alias = cube_aliases[cube.name]
-                    dim_sql = dimension.get_sql_expression(table_alias)
-                    condition = filter_item.to_sql_condition(dim_sql, dimension_type=dimension.type)
+                    member_name = filter_item.dimension or filter_item.member
+                    if is_measure_filter:
+                        # For measure filters, get measure SQL
+                        cube, meas_name = schema.get_cube_for_measure(member_name)
+                        measure = cube.get_measure(meas_name)
+                        table_alias = cube_aliases[cube.name]
+                        member_sql = measure.get_sql_expression(table_alias)
+                        condition = filter_item.to_sql_condition(member_sql, dimension_type="number")
+                    else:
+                        # For dimension filters, get dimension SQL
+                        cube, dim_name = schema.get_cube_for_dimension(member_name)
+                        dimension = cube.get_dimension(dim_name)
+                        table_alias = cube_aliases[cube.name]
+                        member_sql = dimension.get_sql_expression(table_alias)
+                        condition = filter_item.to_sql_condition(member_sql, dimension_type=dimension.type)
                     conditions.append(condition)
             return " AND ".join(conditions)
         else:
@@ -274,7 +298,11 @@ class Query(BaseModel):
     measures: List[str] = Field(default_factory=list, description="Measures to aggregate")
     filters: List[Union[QueryFilter, LogicalFilter]] = Field(
         default_factory=list, 
-        description="Filters to apply (can include logical operators)"
+        description="Dimension filters to apply in WHERE clause (can include logical operators)"
+    )
+    measure_filters: List[Union[QueryFilter, LogicalFilter]] = Field(
+        default_factory=list,
+        description="Measure filters to apply in HAVING clause (can include logical operators)"
     )
     time_dimensions: List[QueryTimeDimension] = Field(
         default_factory=list, 
@@ -283,6 +311,10 @@ class Query(BaseModel):
     order_by: List[QueryOrderBy] = Field(default_factory=list, description="Ordering")
     limit: Optional[int] = Field(None, description="Limit number of results")
     offset: Optional[int] = Field(None, description="Offset for pagination")
+    ctes: List[dict[str, str]] = Field(
+        default_factory=list,
+        description="Common Table Expressions (CTEs) - [{'alias': str, 'query': str}]"
+    )
 
     def validate(self) -> None:
         """Validate the query."""

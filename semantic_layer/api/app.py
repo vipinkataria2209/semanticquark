@@ -267,7 +267,9 @@ def create_app() -> FastAPI:
         dimensions: list[str] = []
         measures: list[str] = []
         filters: list[Dict[str, Any]] = []
+        measureFilters: list[Dict[str, Any]] = []  # Measure filters for HAVING clause
         timeDimensions: list[Dict[str, Any]] = []  # Support timeDimensions
+        ctes: list[Dict[str, str]] = []  # Common Table Expressions: [{"alias": str, "query": str}]
         order_by: list[Dict[str, Any]] = []
         limit: int | None = None
         offset: int | None = None

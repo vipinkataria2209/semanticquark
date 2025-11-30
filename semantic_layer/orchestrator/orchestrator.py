@@ -90,10 +90,12 @@ class QueryEngine:
                 dimensions=query.dimensions.copy(),
                 measures=query.measures.copy(),
                 filters=query.filters.copy(),
+                measure_filters=query.measure_filters.copy(),
                 time_dimensions=new_time_dimensions,
                 order_by=query.order_by.copy(),
                 limit=query.limit,
                 offset=query.offset,
+                ctes=query.ctes.copy(),
             )
             queries.append(new_query)
         
@@ -223,6 +225,16 @@ class QueryEngine:
             if user_context:
                 security_context = SecurityContext(**user_context)
             
+            # Apply CTEs from query to SQLBuilder BEFORE building SQL
+            # Clear any existing CTEs from previous queries first
+            if not hasattr(self.sql_builder, 'with_queries'):
+                self.sql_builder.with_queries = []
+            self.sql_builder.with_queries.clear()
+            
+            # Add CTEs from current query
+            for cte in query.ctes:
+                self.sql_builder.add_with_query(cte["alias"], cte["query"])
+            
             # Generate SQL from semantic query with security context
             # If pre-aggregation is available, use it
             if pre_agg_used and pre_agg_table:
@@ -238,6 +250,11 @@ class QueryEngine:
                     cube.table = original_table
             else:
                 sql = self.sql_builder.build(query, security_context=security_context)
+            
+            # Clear CTEs after building SQL (for next query)
+            # Reset the with_queries list for the next query
+            if hasattr(self.sql_builder, 'with_queries'):
+                self.sql_builder.with_queries.clear()
 
             # Execute query
             results = await self.connector.execute_query(sql)
