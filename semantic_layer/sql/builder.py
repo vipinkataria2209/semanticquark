@@ -1,5 +1,6 @@
 """SQL query builder from semantic queries."""
 
+from collections import deque
 from typing import Dict, List, Optional, Set, Tuple
 
 from semantic_layer.auth.base import SecurityContext
@@ -34,6 +35,9 @@ class SQLBuilder:
         """Initialize SQL builder with schema."""
         self.schema = schema
         self.with_queries: List[Dict[str, str]] = []  # List of CTEs: [{"alias": str, "query": str}]
+        # Build relationship graph for path finding (similar to Cube.js JoinGraph)
+        self._relationship_graph: Dict[str, Dict[str, Relationship]] = {}
+        self._build_relationship_graph()
 
     def build(
         self, query: Query, security_context: Optional[SecurityContext] = None
@@ -239,17 +243,31 @@ class SQLBuilder:
     def _build_join_plan(
         self, primary_cube_name: str, required_cubes: Set[str]
     ) -> Dict[str, str]:
-        """Build a plan for joining cubes and return cube to alias mapping."""
+        """Build a plan for joining cubes and return cube to alias mapping.
+        
+        This method assigns aliases to all cubes that will be joined, including
+        intermediate cubes in paths (e.g., if joining orders->countries, we need
+        aliases for orders, customers, and countries).
+        """
         cube_aliases: Dict[str, str] = {primary_cube_name: "t0"}
         
         if len(required_cubes) == 1:
             return cube_aliases
 
-        # Find join paths from primary cube to all other cubes
+        # Find all cubes that need to be joined (including intermediate cubes in paths)
+        all_cubes_to_join = {primary_cube_name}
         remaining_cubes = required_cubes - {primary_cube_name}
-        alias_counter = 1
-
+        
+        # For each required cube, find its path and add all intermediate cubes
         for cube_name in remaining_cubes:
+            path = self._find_path_bfs(primary_cube_name, cube_name)
+            if path:
+                # Add all cubes in the path
+                all_cubes_to_join.update(path)
+        
+        # Assign aliases to all cubes that need to be joined
+        alias_counter = 1
+        for cube_name in sorted(all_cubes_to_join):
             if cube_name not in cube_aliases:
                 cube_aliases[cube_name] = f"t{alias_counter}"
                 alias_counter += 1
@@ -259,7 +277,12 @@ class SQLBuilder:
     def _build_join_clauses(
         self, primary_cube_name: str, required_cubes: Set[str], cube_aliases: Dict[str, str]
     ) -> str:
-        """Build JOIN clauses for all required cubes."""
+        """Build JOIN clauses for all required cubes.
+        
+        This method builds joins by finding paths from the primary cube to each
+        required cube. For indirect paths (A->B->C), it builds joins incrementally,
+        ensuring intermediate cubes are joined first.
+        """
         if len(required_cubes) == 1:
             return ""
 
@@ -271,16 +294,70 @@ class SQLBuilder:
         # Build joins for each remaining cube
         remaining_cubes = required_cubes - {primary_cube_name}
         
+        # Find paths for all remaining cubes
+        cube_paths: Dict[str, List[str]] = {}
         for cube_name in remaining_cubes:
-            join_info = self._find_join_path(primary_cube_name, cube_name, joined_cubes, cube_aliases)
-            if join_info:
-                target_cube = self.schema.get_cube(cube_name)
-                target_alias = cube_aliases[cube_name]
-                join_clause = f"{join_info.join_type} {target_cube.table} AS {target_alias} ON {join_info.join_condition}"
-                join_clauses.append(join_clause)
-                joined_cubes.add(cube_name)
+            path = self._find_path_bfs(primary_cube_name, cube_name)
+            if path:
+                cube_paths[cube_name] = path
+        
+        # Sort cubes by path length (shortest first) to ensure intermediate cubes are joined first
+        sorted_cubes = sorted(cube_paths.items(), key=lambda x: len(x[1]))
+        
+        # Build joins following the paths
+        for cube_name, path in sorted_cubes:
+            # Join each hop in the path
+            for i in range(len(path) - 1):
+                hop_from = path[i]
+                hop_to = path[i + 1]
+                
+                # Skip if already joined
+                if hop_to in joined_cubes:
+                    continue
+                
+                # Find join info for this hop
+                join_info = None
+                if hop_from in self._relationship_graph and hop_to in self._relationship_graph[hop_from]:
+                    relationship = self._relationship_graph[hop_from][hop_to]
+                    join_info = self._create_join_info(
+                        relationship, hop_from, hop_to, cube_aliases
+                    )
+                elif hop_to in self._relationship_graph and hop_from in self._relationship_graph[hop_to]:
+                    relationship = self._relationship_graph[hop_to][hop_from]
+                    join_info = self._create_reverse_join_info(
+                        relationship, hop_from, hop_to, cube_aliases
+                    )
+                
+                if join_info:
+                    target_cube = self.schema.get_cube(hop_to)
+                    target_alias = cube_aliases[hop_to]
+                    join_clause = f"{join_info.join_type} {target_cube.table} AS {target_alias} ON {join_info.join_condition}"
+                    join_clauses.append(join_clause)
+                    joined_cubes.add(hop_to)
 
         return " ".join(join_clauses) if join_clauses else ""
+
+    def _build_relationship_graph(self) -> None:
+        """Build a directed graph of all cube relationships for path finding.
+        
+        Similar to Cube.js JoinGraph.compile(), this builds an adjacency list
+        representation of the relationship graph where:
+        - Nodes are cube names
+        - Edges are relationships between cubes
+        - Graph is directed: from_cube -> to_cube
+        """
+        self._relationship_graph = {}
+        
+        # Build graph from all cubes and their relationships
+        for cube_name, cube in self.schema.cubes.items():
+            if cube_name not in self._relationship_graph:
+                self._relationship_graph[cube_name] = {}
+            
+            # Add direct relationships (from_cube -> to_cube)
+            for rel_name, relationship in cube.relationships.items():
+                target_cube = relationship.cube
+                # Store relationship with key as target cube name
+                self._relationship_graph[cube_name][target_cube] = relationship
 
     def _find_join_path(
         self,
@@ -289,28 +366,121 @@ class SQLBuilder:
         already_joined: Set[str],
         cube_aliases: Dict[str, str],
     ) -> Optional[JoinInfo]:
-        """Find a join path from one cube to another."""
-        from_cube_obj = self.schema.get_cube(from_cube)
+        """Find a join path from one cube to another using BFS graph traversal.
         
-        # Check direct relationships
-        for rel_name, relationship in from_cube_obj.relationships.items():
-            if relationship.cube == to_cube:
+        This implements the same functionality as Cube.js JoinGraph.buildJoinTreeForRoot(),
+        using BFS (Breadth-First Search) to find the shortest path between cubes.
+        Works for both direct relationships (A->B) and indirect paths (A->B->C).
+        
+        Args:
+            from_cube: Source cube name
+            to_cube: Target cube name
+            already_joined: Set of cubes already joined (for optimization)
+            cube_aliases: Mapping of cube names to table aliases
+            
+        Returns:
+            JoinInfo for the first hop in the path, or None if no path exists
+        """
+        # If same cube, no join needed
+        if from_cube == to_cube:
+            return None
+        
+        # First, try direct relationship (fast path)
+        if from_cube in self._relationship_graph:
+            if to_cube in self._relationship_graph[from_cube]:
+                relationship = self._relationship_graph[from_cube][to_cube]
                 return self._create_join_info(
                     relationship, from_cube, to_cube, cube_aliases
                 )
-
+        
         # Check reverse relationships (if to_cube has relationship to from_cube)
-        to_cube_obj = self.schema.get_cube(to_cube)
-        for rel_name, relationship in to_cube_obj.relationships.items():
-            if relationship.cube == from_cube:
-                # Reverse the relationship
+        if to_cube in self._relationship_graph:
+            if from_cube in self._relationship_graph[to_cube]:
+                relationship = self._relationship_graph[to_cube][from_cube]
                 return self._create_reverse_join_info(
                     relationship, from_cube, to_cube, cube_aliases
                 )
-
-        # If no direct relationship, try to find a path through other cubes
-        # This is a simplified version - in production, you'd want a proper pathfinding algorithm
+        
+        # Use BFS to find indirect path (A->B->C)
+        path = self._find_path_bfs(from_cube, to_cube)
+        if not path or len(path) < 2:
+            return None
+        
+        # Return join info for the first hop in the path
+        # The rest of the path will be handled in subsequent calls
+        first_hop_from = path[0]
+        first_hop_to = path[1]
+        
+        if first_hop_from in self._relationship_graph:
+            if first_hop_to in self._relationship_graph[first_hop_from]:
+                relationship = self._relationship_graph[first_hop_from][first_hop_to]
+                return self._create_join_info(
+                    relationship, first_hop_from, first_hop_to, cube_aliases
+                )
+        
         return None
+
+    def _find_path_bfs(self, from_cube: str, to_cube: str) -> Optional[List[str]]:
+        """Find shortest path between two cubes using BFS (Breadth-First Search).
+        
+        Similar to Cube.js graph.path() using Dijkstra, but uses BFS since
+        all edges have weight 1 (unweighted graph). This ensures we find the
+        shortest path (minimum number of hops) between cubes.
+        
+        The algorithm supports bidirectional traversal:
+        - Forward: A -> B (A has relationship to B)
+        - Reverse: A <- B (B has relationship to A, so we can traverse B -> A)
+        
+        Args:
+            from_cube: Source cube name
+            to_cube: Target cube name
+            
+        Returns:
+            List of cube names representing the path, or None if no path exists
+            Example: ['orders', 'customers', 'countries']
+        """
+        if from_cube == to_cube:
+            return [from_cube]
+        
+        # BFS queue: (current_cube, path_so_far)
+        queue = deque([(from_cube, [from_cube])])
+        visited = {from_cube}
+        
+        # Build reverse index for efficient reverse relationship lookup
+        # This avoids nested loops in the BFS traversal
+        reverse_graph: Dict[str, Set[str]] = {}
+        for source_cube, targets in self._relationship_graph.items():
+            for target_cube in targets:
+                if target_cube not in reverse_graph:
+                    reverse_graph[target_cube] = set()
+                reverse_graph[target_cube].add(source_cube)
+        
+        while queue:
+            current_cube, path = queue.popleft()
+            
+            # Get all cubes directly connected via forward relationships
+            if current_cube in self._relationship_graph:
+                for next_cube, relationship in self._relationship_graph[current_cube].items():
+                    if next_cube == to_cube:
+                        # Found path!
+                        return path + [next_cube]
+                    
+                    if next_cube not in visited:
+                        visited.add(next_cube)
+                        queue.append((next_cube, path + [next_cube]))
+            
+            # Get all cubes connected via reverse relationships (bidirectional traversal)
+            if current_cube in reverse_graph:
+                for prev_cube in reverse_graph[current_cube]:
+                    if prev_cube == to_cube:
+                        # Found path via reverse relationship!
+                        return path + [prev_cube]
+                    
+                    if prev_cube not in visited:
+                        visited.add(prev_cube)
+                        queue.append((prev_cube, path + [prev_cube]))
+        
+        return None  # No path found
 
     def _create_join_info(
         self,
