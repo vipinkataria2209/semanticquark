@@ -116,7 +116,7 @@ async def lifespan(app: FastAPI):
     if settings.cache_enabled:
         if settings.cache_type == "redis":
             try:
-                cache = RedisCache(redis_url=settings.redis_url)
+                cache = RedisCache(redis_url=settings.effective_redis_url)
                 await cache.connect()
                 print("Redis cache connected")
             except Exception as e:

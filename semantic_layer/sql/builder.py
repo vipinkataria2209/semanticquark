@@ -56,6 +56,17 @@ class SQLBuilder:
         # Build SELECT clause
         select_parts = []
         group_by_parts = []
+        
+        # Track if primary key is included and if we can skip GROUP BY
+        primary_key_dimension_path = None
+        primary_key_dimension_sql = None
+        primary_cube = self.schema.get_cube(primary_cube_name)
+        
+        # Find primary key dimension
+        for dim_name, dimension in primary_cube.dimensions.items():
+            if dimension.primary_key:
+                primary_key_dimension_path = f"{primary_cube_name}.{dim_name}"
+                break
 
         # Add dimensions
         for dim_path in query.dimensions:
@@ -64,6 +75,11 @@ class SQLBuilder:
             table_alias = cube_aliases[cube.name]
             dim_sql = dimension.get_sql_expression(table_alias)
             select_parts.append(f"{dim_sql} AS {dim_path.replace('.', '_')}")
+            
+            # Track primary key SQL if this is the primary key
+            if dim_path == primary_key_dimension_path:
+                primary_key_dimension_sql = dim_sql
+            
             group_by_parts.append(dim_sql)
 
         # Add time dimensions
@@ -148,8 +164,18 @@ class SQLBuilder:
             where_clause = "WHERE " + " AND ".join(where_conditions)
 
         # Build GROUP BY clause
+        # Optimization: Skip GROUP BY if:
+        # 1. No measures (only dimensions)
+        # 2. Primary key is included in dimensions
+        # 3. Only one cube is involved (no joins)
+        skip_group_by = (
+            not query.measures and  # No measures
+            primary_key_dimension_sql is not None and  # Primary key is included
+            len(required_cubes) == 1  # Only one cube (no joins)
+        )
+        
         group_by_clause = ""
-        if group_by_parts:
+        if group_by_parts and not skip_group_by:
             group_by_clause = "GROUP BY " + ", ".join(group_by_parts)
 
         # Build HAVING clause for measure filters

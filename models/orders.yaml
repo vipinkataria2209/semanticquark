@@ -45,6 +45,51 @@ cubes:
         type: time
         sql: delivered_date
         description: Date when order was delivered
+      
+      subtotal:
+        type: number
+        sql: subtotal
+        description: Order subtotal amount
+        format: currency
+      
+      tax:
+        type: number
+        sql: tax
+        description: Tax amount
+        format: currency
+      
+      shipping_cost:
+        type: number
+        sql: shipping_cost
+        description: Shipping cost
+        format: currency
+      
+      discount:
+        type: number
+        sql: discount
+        description: Discount amount
+        format: currency
+      
+      total_amount:
+        type: number
+        sql: total_amount
+        description: Total order amount
+        format: currency
+      
+      shipping_address:
+        type: string
+        sql: shipping_address
+        description: Shipping address
+      
+      billing_address:
+        type: string
+        sql: billing_address
+        description: Billing address
+      
+      notes:
+        type: string
+        sql: notes
+        description: Order notes
     
     measures:
       count:

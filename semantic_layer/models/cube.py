@@ -31,12 +31,26 @@ class Cube(BaseModelDefinition):
     def get_dimension(self, name: str) -> Dimension:
         """Get a dimension by name."""
         if name not in self.dimensions:
+            # Check if it exists as a measure to provide a helpful error message
+            if name in self.measures:
+                raise ModelError(
+                    f"Dimension '{name}' not found in cube '{self.name}'. "
+                    f"'{name}' is a measure, not a dimension. "
+                    f"Use it in 'measures' instead of 'dimensions'."
+                )
             raise ModelError(f"Dimension '{name}' not found in cube '{self.name}'")
         return self.dimensions[name]
 
     def get_measure(self, name: str) -> Measure:
         """Get a measure by name."""
         if name not in self.measures:
+            # Check if it exists as a dimension to provide a helpful error message
+            if name in self.dimensions:
+                raise ModelError(
+                    f"Measure '{name}' not found in cube '{self.name}'. "
+                    f"'{name}' is a dimension, not a measure. "
+                    f"Use it in 'dimensions' instead of 'measures'."
+                )
             raise ModelError(f"Measure '{name}' not found in cube '{self.name}'")
         return self.measures[name]
 

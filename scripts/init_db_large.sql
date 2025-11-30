@@ -129,9 +129,9 @@ SELECT
     (100 + floor(random() * 900)::int)::text || '-' || 
     (1000 + floor(random() * 9000)::int)::text,
     (100 + floor(random() * 9000)::int)::text || ' ' ||
-    ARRAY['Main St', 'Oak Ave', 'Park Blvd', 'Elm St', 'Cedar Rd', 'Maple Dr', 'Pine Ln', 'First St', 'Second Ave', 'Third Blvd'][1 + floor(random() * 10)::int],
-    ARRAY['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'San Jose'][1 + floor(random() * 10)::int],
-    ARRAY['NY', 'CA', 'IL', 'TX', 'AZ', 'PA', 'TX', 'CA', 'TX', 'CA'][1 + floor(random() * 10)::int],
+    (ARRAY['Main St', 'Oak Ave', 'Park Blvd', 'Elm St', 'Cedar Rd', 'Maple Dr', 'Pine Ln', 'First St', 'Second Ave', 'Third Blvd'])[1 + floor(random() * 10)::int],
+    (ARRAY['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'San Jose'])[1 + floor(random() * 10)::int],
+    (ARRAY['NY', 'CA', 'IL', 'TX', 'AZ', 'PA', 'TX', 'CA', 'TX', 'CA'])[1 + floor(random() * 10)::int],
     LPAD((10000 + floor(random() * 90000)::int)::text, 5, '0'),
     'USA',
     CURRENT_TIMESTAMP - (random() * interval '365 days')
@@ -143,7 +143,7 @@ LATERAL (SELECT ARRAY['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia'
 INSERT INTO products (name, description, category_id, sku, price, cost, stock_quantity, is_active, created_at)
 SELECT 
     product_names[1 + floor(random() * array_length(product_names, 1))::int] || ' ' || 
-    ARRAY['Pro', 'Deluxe', 'Premium', 'Standard', 'Basic', 'Advanced', 'Ultra', 'Plus', 'Elite', 'Classic'][1 + floor(random() * 10)::int],
+    (ARRAY['Pro', 'Deluxe', 'Premium', 'Standard', 'Basic', 'Advanced', 'Ultra', 'Plus', 'Elite', 'Classic'])[1 + floor(random() * 10)::int],
     'High-quality ' || product_names[1 + floor(random() * array_length(product_names, 1))::int] || ' for your needs',
     1 + floor(random() * 10)::int,
     'SKU-' || LPAD(generate_series::text, 6, '0'),
@@ -160,7 +160,7 @@ INSERT INTO orders (customer_id, order_number, status, order_date, shipped_date,
 SELECT 
     1 + floor(random() * 2000)::int,
     'ORD-' || LPAD(generate_series::text, 8, '0'),
-    ARRAY['pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'][1 + floor(random() * 6)::int],
+    (ARRAY['pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'])[1 + floor(random() * 6)::int],
     CURRENT_TIMESTAMP - (random() * interval '365 days'),
     CASE 
         WHEN random() > 0.3 THEN CURRENT_TIMESTAMP - (random() * interval '360 days')
@@ -178,14 +178,14 @@ SELECT
     CASE WHEN random() > 0.5 THEN 5.99 ELSE 0.00 END - 
     CASE WHEN random() > 0.7 THEN (10.00 + (random() * 990.00)) * (0.05 + random() * 0.15) ELSE 0.00 END,
     (100 + floor(random() * 9000)::int)::text || ' ' ||
-    ARRAY['Main St', 'Oak Ave', 'Park Blvd', 'Elm St', 'Cedar Rd'][1 + floor(random() * 5)::int] || ', ' ||
-    ARRAY['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'][1 + floor(random() * 5)::int] || ', ' ||
-    ARRAY['NY', 'CA', 'IL', 'TX', 'AZ'][1 + floor(random() * 5)::int] || ' ' ||
+    (ARRAY['Main St', 'Oak Ave', 'Park Blvd', 'Elm St', 'Cedar Rd'])[1 + floor(random() * 5)::int] || ', ' ||
+    (ARRAY['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'])[1 + floor(random() * 5)::int] || ', ' ||
+    (ARRAY['NY', 'CA', 'IL', 'TX', 'AZ'])[1 + floor(random() * 5)::int] || ' ' ||
     LPAD((10000 + floor(random() * 90000)::int)::text, 5, '0'),
     (100 + floor(random() * 9000)::int)::text || ' ' ||
-    ARRAY['Main St', 'Oak Ave', 'Park Blvd', 'Elm St', 'Cedar Rd'][1 + floor(random() * 5)::int] || ', ' ||
-    ARRAY['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'][1 + floor(random() * 5)::int] || ', ' ||
-    ARRAY['NY', 'CA', 'IL', 'TX', 'AZ'][1 + floor(random() * 5)::int] || ' ' ||
+    (ARRAY['Main St', 'Oak Ave', 'Park Blvd', 'Elm St', 'Cedar Rd'])[1 + floor(random() * 5)::int] || ', ' ||
+    (ARRAY['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'])[1 + floor(random() * 5)::int] || ', ' ||
+    (ARRAY['NY', 'CA', 'IL', 'TX', 'AZ'])[1 + floor(random() * 5)::int] || ' ' ||
     LPAD((10000 + floor(random() * 90000)::int)::text, 5, '0'),
     CASE WHEN random() > 0.8 THEN 'Special instructions or notes' ELSE NULL END,
     CURRENT_TIMESTAMP - (random() * interval '365 days'),
@@ -217,13 +217,13 @@ LIMIT 10000;
 INSERT INTO payments (order_id, payment_method, payment_status, amount, transaction_id, payment_date, created_at)
 SELECT 
     o.id,
-    ARRAY['credit_card', 'debit_card', 'paypal', 'bank_transfer', 'cash', 'gift_card'][1 + floor(random() * 6)::int],
+    (ARRAY['credit_card', 'debit_card', 'paypal', 'bank_transfer', 'cash', 'gift_card'])[1 + floor(random() * 6)::int],
     CASE 
         WHEN o.status IN ('delivered', 'shipped') THEN 
-            ARRAY['completed', 'processed'][1 + floor(random() * 2)::int]
+            (ARRAY['completed', 'processed'])[1 + floor(random() * 2)::int]
         WHEN o.status = 'cancelled' THEN 'refunded'
         WHEN o.status = 'refunded' THEN 'refunded'
-        ELSE ARRAY['pending', 'processing', 'failed'][1 + floor(random() * 3)::int]
+        ELSE (ARRAY['pending', 'processing', 'failed'])[1 + floor(random() * 3)::int]
     END,
     o.total_amount,
     'TXN-' || LPAD((1000000 + floor(random() * 9000000)::int)::text, 10, '0'),
