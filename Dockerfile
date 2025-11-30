@@ -10,7 +10,9 @@ RUN apt-get update && apt-get install -y \
 
 # Copy requirements first for better caching
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY pyproject.toml .
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir pytest pytest-asyncio httpx
 
 # Copy all necessary files
 COPY setup.py ./
@@ -18,6 +20,7 @@ COPY README.md* ./
 COPY semantic_layer/ ./semantic_layer/
 COPY models/ ./models/
 COPY scripts/ ./scripts/
+COPY tests/ ./tests/
 
 # Install the package (handle missing README gracefully)
 RUN if [ -f README.md ]; then pip install -e .; else pip install --no-deps -e . || pip install .; fi

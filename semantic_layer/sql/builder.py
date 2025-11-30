@@ -7,7 +7,7 @@ from semantic_layer.exceptions import ModelError, QueryError
 from semantic_layer.models.cube import Cube
 from semantic_layer.models.relationship import Relationship
 from semantic_layer.models.schema import Schema
-from semantic_layer.query.query import Query
+from semantic_layer.query.query import Query, LogicalFilter
 from semantic_layer.security.rls import RLSFilter
 
 
@@ -91,15 +91,22 @@ class SQLBuilder:
         # Build WHERE clause
         where_conditions = []
         
-        # Add query filters
+        # Add query filters (supports logical operators)
         for filter_obj in query.filters:
-            cube, dim_name = self.schema.get_cube_for_dimension(filter_obj.dimension)
-            dimension = cube.get_dimension(dim_name)
-            table_alias = cube_aliases[cube.name]
-            dim_sql = dimension.get_sql_expression(table_alias)
-            # Pass dimension type for proper type casting
-            condition = filter_obj.to_sql_condition(dim_sql, dimension_type=dimension.type)
-            where_conditions.append(condition)
+            if isinstance(filter_obj, LogicalFilter):
+                # Logical filter (AND/OR)
+                condition = filter_obj.to_sql_condition(self.schema, cube_aliases)
+                where_conditions.append(condition)
+            else:
+                # Regular QueryFilter
+                dimension_name = filter_obj.dimension or filter_obj.member
+                cube, dim_name = self.schema.get_cube_for_dimension(dimension_name)
+                dimension = cube.get_dimension(dim_name)
+                table_alias = cube_aliases[cube.name]
+                dim_sql = dimension.get_sql_expression(table_alias)
+                # Pass dimension type for proper type casting
+                condition = filter_obj.to_sql_condition(dim_sql, dimension_type=dimension.type)
+                where_conditions.append(condition)
         
         # Add time dimension date range filters
         for td in query.time_dimensions:
@@ -333,13 +340,54 @@ class SQLBuilder:
 
         # Get cubes from filters
         for filter_obj in query.filters:
-            cube_name, _ = filter_obj.dimension.split(".", 1)
-            cubes.add(cube_name)
+            if isinstance(filter_obj, LogicalFilter):
+                # Recursively get cubes from nested filters
+                if filter_obj.or_:
+                    for nested_filter in filter_obj.or_:
+                        if isinstance(nested_filter, LogicalFilter):
+                            # Recursive call would be complex, so we'll extract from nested filters
+                            cubes.update(self._get_cubes_from_filter(nested_filter))
+                        else:
+                            dimension_name = nested_filter.dimension or nested_filter.member
+                            if dimension_name:
+                                cube_name, _ = dimension_name.split(".", 1)
+                                cubes.add(cube_name)
+                elif filter_obj.and_:
+                    for nested_filter in filter_obj.and_:
+                        if isinstance(nested_filter, LogicalFilter):
+                            cubes.update(self._get_cubes_from_filter(nested_filter))
+                        else:
+                            dimension_name = nested_filter.dimension or nested_filter.member
+                            if dimension_name:
+                                cube_name, _ = dimension_name.split(".", 1)
+                                cubes.add(cube_name)
+            else:
+                dimension_name = filter_obj.dimension or filter_obj.member
+                if dimension_name:
+                    cube_name, _ = dimension_name.split(".", 1)
+                    cubes.add(cube_name)
 
         # Get cubes from order_by
         for order in query.order_by:
             cube_name, _ = order.dimension.split(".", 1)
             cubes.add(cube_name)
 
+        return cubes
+
+    def _get_cubes_from_filter(self, filter_obj) -> Set[str]:
+        """Recursively extract cube names from a filter (handles LogicalFilter)."""
+        cubes: Set[str] = set()
+        if isinstance(filter_obj, LogicalFilter):
+            if filter_obj.or_:
+                for nested_filter in filter_obj.or_:
+                    cubes.update(self._get_cubes_from_filter(nested_filter))
+            elif filter_obj.and_:
+                for nested_filter in filter_obj.and_:
+                    cubes.update(self._get_cubes_from_filter(nested_filter))
+        else:
+            dimension_name = filter_obj.dimension or filter_obj.member
+            if dimension_name:
+                cube_name, _ = dimension_name.split(".", 1)
+                cubes.add(cube_name)
         return cubes
 

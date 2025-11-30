@@ -1,14 +1,72 @@
 """Query representation."""
 
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Union, TYPE_CHECKING
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, field_serializer, model_validator
+
+# Forward reference will be resolved after LogicalFilter is defined
+
+
+class LogicalFilter(BaseModel):
+    """Represents a logical filter (AND/OR) containing other filters."""
+    
+    or_: Optional[List[Any]] = Field(
+        None, alias="or", description="OR logical operator - array of filters"
+    )
+    and_: Optional[List[Any]] = Field(
+        None, alias="and", description="AND logical operator - array of filters"
+    )
+    
+    @model_validator(mode='after')
+    def validate_logical(self):
+        """Validate that exactly one of 'or' or 'and' is provided."""
+        if not self.or_ and not self.and_:
+            raise ValueError("Logical filter must have either 'or' or 'and' property")
+        if self.or_ and self.and_:
+            raise ValueError("Logical filter cannot have both 'or' and 'and' properties")
+        return self
+    
+    def to_sql_condition(self, schema, cube_aliases) -> str:
+        """Convert logical filter to SQL WHERE condition."""
+        if self.or_:
+            conditions = []
+            for filter_item in self.or_:
+                if isinstance(filter_item, LogicalFilter):
+                    conditions.append(f"({filter_item.to_sql_condition(schema, cube_aliases)})")
+                else:
+                    # QueryFilter
+                    dimension_name = filter_item.dimension or filter_item.member
+                    cube, dim_name = schema.get_cube_for_dimension(dimension_name)
+                    dimension = cube.get_dimension(dim_name)
+                    table_alias = cube_aliases[cube.name]
+                    dim_sql = dimension.get_sql_expression(table_alias)
+                    condition = filter_item.to_sql_condition(dim_sql, dimension_type=dimension.type)
+                    conditions.append(condition)
+            return " OR ".join(conditions)
+        elif self.and_:
+            conditions = []
+            for filter_item in self.and_:
+                if isinstance(filter_item, LogicalFilter):
+                    conditions.append(f"({filter_item.to_sql_condition(schema, cube_aliases)})")
+                else:
+                    # QueryFilter
+                    dimension_name = filter_item.dimension or filter_item.member
+                    cube, dim_name = schema.get_cube_for_dimension(dimension_name)
+                    dimension = cube.get_dimension(dim_name)
+                    table_alias = cube_aliases[cube.name]
+                    dim_sql = dimension.get_sql_expression(table_alias)
+                    condition = filter_item.to_sql_condition(dim_sql, dimension_type=dimension.type)
+                    conditions.append(condition)
+            return " AND ".join(conditions)
+        else:
+            raise ValueError("Logical filter must have either 'or' or 'and' property")
 
 
 class QueryFilter(BaseModel):
     """Represents a filter in a query."""
 
-    dimension: str = Field(..., description="Dimension to filter on (e.g., 'orders.status')")
+    dimension: Optional[str] = Field(None, description="Dimension to filter on (e.g., 'orders.status')")
+    member: Optional[str] = Field(None, description="Member to filter on (alias for dimension)")
     operator: str = Field(..., description="Filter operator (equals, not_equals, contains, etc.)")
     values: List[Union[str, int, float]] = Field(default_factory=list, description="Filter values")
     
@@ -19,6 +77,16 @@ class QueryFilter(BaseModel):
         if not isinstance(v, list):
             return [v]
         return v
+    
+    @model_validator(mode='after')
+    def validate_dimension_or_member(self):
+        """Validate that either dimension or member is provided."""
+        if not self.dimension and not self.member:
+            raise ValueError("Filter must have either 'dimension' or 'member' property")
+        # Use dimension if member is provided (for compatibility)
+        if self.member and not self.dimension:
+            self.dimension = self.member
+        return self
 
     def to_sql_condition(self, dimension_sql: str, dimension_type: Optional[str] = None) -> str:
         """Convert filter to SQL WHERE condition."""
@@ -173,6 +241,30 @@ class QueryTimeDimension(BaseModel):
     def model_copy(self, **kwargs):
         """Create a copy of the model with updated fields."""
         return super().model_copy(**kwargs)
+    
+    def _parse_date_range(self, date_range: Union[str, List[str]]) -> List[str]:
+        """Parse date range - handles both absolute and relative dates."""
+        from semantic_layer.utils.date_parser import parse_relative_date
+        
+        if isinstance(date_range, str):
+            # Relative date like "last week"
+            return parse_relative_date(date_range)
+        elif isinstance(date_range, list):
+            # Check if any element is a relative date string
+            parsed = []
+            for item in date_range:
+                if isinstance(item, str) and not item[0].isdigit():
+                    # Might be relative date
+                    try:
+                        parsed_dates = parse_relative_date(item)
+                        parsed.extend(parsed_dates)
+                    except ValueError:
+                        # Not a relative date, use as-is
+                        parsed.append(item)
+                else:
+                    parsed.append(item)
+            return parsed
+        return date_range
 
 
 class Query(BaseModel):
@@ -180,7 +272,10 @@ class Query(BaseModel):
 
     dimensions: List[str] = Field(default_factory=list, description="Dimensions to group by")
     measures: List[str] = Field(default_factory=list, description="Measures to aggregate")
-    filters: List[QueryFilter] = Field(default_factory=list, description="Filters to apply")
+    filters: List[Union[QueryFilter, LogicalFilter]] = Field(
+        default_factory=list, 
+        description="Filters to apply (can include logical operators)"
+    )
     time_dimensions: List[QueryTimeDimension] = Field(
         default_factory=list, 
         description="Time dimensions with granularity and date ranges"

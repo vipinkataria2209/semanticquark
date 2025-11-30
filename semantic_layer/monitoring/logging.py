@@ -4,7 +4,7 @@ import json
 import time
 from typing import Any, Dict, Optional
 
-from semantic_layer.query.query import Query
+from semantic_layer.query.query import Query, LogicalFilter, QueryFilter
 
 
 class QueryLogger:
@@ -34,14 +34,7 @@ class QueryLogger:
             "user_id": user_id,
             "dimensions": query.dimensions,
             "measures": query.measures,
-            "filters": [
-                {
-                    "dimension": f.dimension,
-                    "operator": f.operator,
-                    "values": f.values,
-                }
-                for f in query.filters
-            ],
+            "filters": [self._serialize_filter(f) for f in query.filters],
             "execution_time_ms": execution_time_ms,
             "cache_hit": cache_hit,
             "sql": sql,
@@ -59,14 +52,26 @@ class QueryLogger:
             {
                 "dimensions": query.dimensions,
                 "measures": query.measures,
-                "filters": [
-                    {"dimension": f.dimension, "operator": f.operator, "values": f.values}
-                    for f in query.filters
-                ],
+                "filters": [self._serialize_filter(f) for f in query.filters],
             },
             sort_keys=True,
         )
         return hashlib.md5(query_str.encode()).hexdigest()[:8]
+
+    def _serialize_filter(self, filter_obj) -> Dict[str, Any]:
+        """Serialize a filter (handles both QueryFilter and LogicalFilter)."""
+        if isinstance(filter_obj, LogicalFilter):
+            if filter_obj.or_:
+                return {"or": [self._serialize_filter(f) for f in filter_obj.or_]}
+            elif filter_obj.and_:
+                return {"and": [self._serialize_filter(f) for f in filter_obj.and_]}
+        elif isinstance(filter_obj, QueryFilter):
+            return {
+                "dimension": filter_obj.dimension or filter_obj.member,
+                "operator": filter_obj.operator,
+                "values": filter_obj.values,
+            }
+        return {"unknown": str(type(filter_obj))}
 
     def _print_log(self, log_entry: Dict[str, Any]) -> None:
         """Print log entry (can be replaced with proper logging)."""
