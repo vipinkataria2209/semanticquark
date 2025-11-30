@@ -156,8 +156,8 @@ class QueryEngine:
                 }
             
             # Single query execution
-            query = queries[0]
-            return await self._execute_single_query(query, user_context, start_time)
+            single_query = queries[0]
+            return await self._execute_single_query(single_query, user_context, start_time)
             
         except Exception as e:
             execution_time = (time.time() - start_time) * 1000

@@ -21,6 +21,10 @@ class QueryOptimizer:
         optimized_filters = QueryOptimizer._optimize_filters(query.filters)
         query.filters = optimized_filters
         
+        # Optimize measure filters (same logic)
+        optimized_measure_filters = QueryOptimizer._optimize_filters(query.measure_filters)
+        query.measure_filters = optimized_measure_filters
+        
         # Optimize order_by (remove duplicates)
         seen_orders = set()
         optimized_orders = []
@@ -36,22 +40,24 @@ class QueryOptimizer:
     @staticmethod
     def _optimize_filters(filters: List) -> List:
         """Optimize filter list."""
-        # Group filters by dimension
-        filter_groups = {}
-        for f in filters:
-            if f.dimension not in filter_groups:
-                filter_groups[f.dimension] = []
-            filter_groups[f.dimension].append(f)
+        from semantic_layer.query.query import LogicalFilter
         
-        # Optimize each group
+        # For filters with LogicalFilter, we can't easily optimize by dimension
+        # Just return them as-is for now
         optimized = []
-        for dimension, group in filter_groups.items():
-            if len(group) == 1:
-                optimized.append(group[0])
+        for f in filters:
+            if isinstance(f, LogicalFilter):
+                # LogicalFilter contains nested filters - keep as-is
+                optimized.append(f)
             else:
-                # Combine multiple filters on same dimension
-                # For now, just keep all (could be smarter)
-                optimized.extend(group)
+                # QueryFilter - can optimize by dimension
+                dimension = f.dimension or f.member
+                if dimension:
+                    # For now, just keep all filters (could optimize further)
+                    optimized.append(f)
+                else:
+                    # Invalid filter, skip
+                    continue
         
         return optimized
 

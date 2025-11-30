@@ -175,13 +175,17 @@ class SQLBuilder:
         if query.order_by:
             order_parts = []
             for order in query.order_by:
+                # Ensure order is a QueryOrderBy object with dimension attribute
+                if not hasattr(order, 'dimension'):
+                    continue  # Skip invalid order_by items
                 cube, dim_name = self.schema.get_cube_for_dimension(order.dimension)
                 dimension = cube.get_dimension(dim_name)
                 table_alias = cube_aliases[cube.name]
                 dim_sql = dimension.get_sql_expression(table_alias)
                 direction = order.direction.upper()
                 order_parts.append(f"{dim_sql} {direction}")
-            order_by_clause = "ORDER BY " + ", ".join(order_parts)
+            if order_parts:
+                order_by_clause = "ORDER BY " + ", ".join(order_parts)
 
         # Build LIMIT and OFFSET
         limit_clause = ""
@@ -419,8 +423,10 @@ class SQLBuilder:
 
         # Get cubes from order_by
         for order in query.order_by:
-            cube_name, _ = order.dimension.split(".", 1)
-            cubes.add(cube_name)
+            # Ensure order is a QueryOrderBy object with dimension attribute
+            if hasattr(order, 'dimension') and order.dimension:
+                cube_name, _ = order.dimension.split(".", 1)
+                cubes.add(cube_name)
 
         return cubes
 

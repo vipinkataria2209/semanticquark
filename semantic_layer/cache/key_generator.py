@@ -4,11 +4,28 @@ import hashlib
 import json
 from typing import Any, Dict, Optional
 
-from semantic_layer.query.query import Query
+from semantic_layer.query.query import Query, LogicalFilter, QueryFilter
 
 
 class CacheKeyGenerator:
     """Generates cache keys from queries."""
+
+    @staticmethod
+    def _serialize_filter(filter_obj) -> Dict[str, Any]:
+        """Serialize a filter (handles both QueryFilter and LogicalFilter)."""
+        if isinstance(filter_obj, LogicalFilter):
+            if filter_obj.or_:
+                return {"or": [CacheKeyGenerator._serialize_filter(f) for f in filter_obj.or_]}
+            elif filter_obj.and_:
+                return {"and": [CacheKeyGenerator._serialize_filter(f) for f in filter_obj.and_]}
+            return {}
+        elif isinstance(filter_obj, QueryFilter):
+            return {
+                "dimension": filter_obj.dimension or filter_obj.member,
+                "operator": filter_obj.operator,
+                "values": sorted(filter_obj.values) if filter_obj.values else []
+            }
+        return {"unknown": str(type(filter_obj))}
 
     @staticmethod
     def generate(query: Query, user_context: Optional[Dict[str, Any]] = None, model_version: str = "1.0") -> str:
@@ -17,14 +34,8 @@ class CacheKeyGenerator:
         query_dict = {
             "dimensions": sorted(query.dimensions),
             "measures": sorted(query.measures),
-            "filters": [
-                {
-                    "dimension": f.dimension,
-                    "operator": f.operator,
-                    "values": sorted(f.values) if f.values else []
-                }
-                for f in sorted(query.filters, key=lambda x: x.dimension)
-            ],
+            "filters": [CacheKeyGenerator._serialize_filter(f) for f in query.filters],
+            "measure_filters": [CacheKeyGenerator._serialize_filter(f) for f in query.measure_filters],
             "order_by": [
                 {"dimension": o.dimension, "direction": o.direction}
                 for o in query.order_by
