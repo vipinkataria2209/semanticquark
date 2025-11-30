@@ -61,6 +61,18 @@ class SQLBuilder:
             select_parts.append(f"{dim_sql} AS {dim_path.replace('.', '_')}")
             group_by_parts.append(dim_sql)
 
+        # Add time dimensions
+        for td in query.time_dimensions:
+            if td.granularity:
+                cube, dim_name = self.schema.get_cube_for_dimension(td.dimension)
+                dimension = cube.get_dimension(dim_name)
+                table_alias = cube_aliases[cube.name]
+                # Pass granularity to get_sql_expression
+                dim_sql = dimension.get_sql_expression(table_alias, granularity=td.granularity)
+                alias = f"{td.dimension.replace('.', '_')}_{td.granularity}"
+                select_parts.append(f"{dim_sql} AS {alias}")
+                group_by_parts.append(dim_sql)
+
         # Add measures
         for meas_path in query.measures:
             cube, meas_name = self.schema.get_cube_for_measure(meas_path)
@@ -88,6 +100,23 @@ class SQLBuilder:
             # Pass dimension type for proper type casting
             condition = filter_obj.to_sql_condition(dim_sql, dimension_type=dimension.type)
             where_conditions.append(condition)
+        
+        # Add time dimension date range filters
+        for td in query.time_dimensions:
+            if td.date_range:
+                cube, dim_name = self.schema.get_cube_for_dimension(td.dimension)
+                dimension = cube.get_dimension(dim_name)
+                table_alias = cube_aliases[cube.name]
+                dim_sql = dimension.get_sql_expression(table_alias)
+                
+                # Add date range filter
+                if len(td.date_range) == 1:
+                    # Single date - use >= for start of day
+                    where_conditions.append(f"{dim_sql} >= '{td.date_range[0]}'")
+                elif len(td.date_range) >= 2:
+                    # Date range - use >= start AND <= end
+                    where_conditions.append(f"{dim_sql} >= '{td.date_range[0]}'")
+                    where_conditions.append(f"{dim_sql} <= '{td.date_range[1]}'")
         
         # Add RLS filters for each cube
         if security_context:

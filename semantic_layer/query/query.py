@@ -159,18 +159,47 @@ class QueryOrderBy(BaseModel):
     direction: str = Field(default="asc", description="Order direction (asc or desc)")
 
 
+class QueryTimeDimension(BaseModel):
+    """Represents a time dimension in a query."""
+
+    dimension: str = Field(..., description="Time dimension (e.g., 'orders.created_at')")
+    granularity: Optional[str] = Field(None, description="Time granularity (day, month, year, etc.)")
+    date_range: Optional[List[str]] = Field(None, description="Date range [start, end]")
+    compare_date_range: Optional[List[List[str]]] = Field(
+        None, 
+        description="Compare date ranges [[start1, end1], [start2, end2], ...]"
+    )
+
+    def model_copy(self, **kwargs):
+        """Create a copy of the model with updated fields."""
+        return super().model_copy(**kwargs)
+
+
 class Query(BaseModel):
     """Represents a semantic query."""
 
     dimensions: List[str] = Field(default_factory=list, description="Dimensions to group by")
     measures: List[str] = Field(default_factory=list, description="Measures to aggregate")
     filters: List[QueryFilter] = Field(default_factory=list, description="Filters to apply")
+    time_dimensions: List[QueryTimeDimension] = Field(
+        default_factory=list, 
+        description="Time dimensions with granularity and date ranges"
+    )
     order_by: List[QueryOrderBy] = Field(default_factory=list, description="Ordering")
     limit: Optional[int] = Field(None, description="Limit number of results")
     offset: Optional[int] = Field(None, description="Offset for pagination")
 
     def validate(self) -> None:
         """Validate the query."""
-        if not self.dimensions and not self.measures:
-            raise ValueError("Query must have at least one dimension or measure")
+        if not self.dimensions and not self.measures and not any(
+            td.granularity for td in self.time_dimensions
+        ):
+            raise ValueError("Query must have at least one dimension, measure, or time dimension with granularity")
+        
+        # Validate that compare_date_range is only in one time dimension
+        compare_date_range_count = sum(
+            1 for td in self.time_dimensions if td.compare_date_range is not None
+        )
+        if compare_date_range_count > 1:
+            raise ValueError("compareDateRange can only exist for one timeDimension")
 

@@ -1,7 +1,7 @@
 """FastAPI application."""
 
 from contextlib import asynccontextmanager
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, Union, List
 
 from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -267,6 +267,7 @@ def create_app() -> FastAPI:
         dimensions: list[str] = []
         measures: list[str] = []
         filters: list[Dict[str, Any]] = []
+        timeDimensions: list[Dict[str, Any]] = []  # Support timeDimensions
         order_by: list[Dict[str, Any]] = []
         limit: int | None = None
         offset: int | None = None
@@ -289,18 +290,42 @@ def create_app() -> FastAPI:
     # Query endpoint
     @app.post("/api/v1/query")
     async def query(
-        request: QueryRequest,
+        request: Union[QueryRequest, List[QueryRequest]],
         security_context: Optional[SecurityContext] = Depends(get_security_context),
     ):
-        """Execute a semantic query."""
+        """Execute a semantic query or multiple queries (blending query).
+        
+        Supports:
+        - Single query: {"dimensions": [...], "measures": [...]}
+        - Blending query: [{"dimensions": [...]}, {"measures": [...]}]
+        """
         if query_engine is None:
             raise HTTPException(status_code=503, detail="Query engine not initialized")
 
+        from semantic_layer.query.parser import QueryParser
+
+        # Check if array (blending query)
+        if isinstance(request, list):
+            # Blending query - execute multiple queries
+            results = []
+            for query_req in request:
+                # Check authorization for each query
+                if security_context:
+                    await check_authorization(query_req, "query", "execute")
+                
+                # Parse and execute each query
+                query_obj = QueryParser.parse(query_req.dict())
+                user_context = security_context.to_dict() if security_context else None
+                result = await query_engine.execute(query_obj, user_context=user_context)
+                results.append(result)
+            
+            # Return array of results
+            return {"data": results, "blending_query": True}
+        
+        # Single query (regular or compare date range)
         # Check authorization
         if security_context:
             await check_authorization(request, "query", "execute")
-
-        from semantic_layer.query.parser import QueryParser
 
         # Parse request
         query_obj = QueryParser.parse(request.dict())

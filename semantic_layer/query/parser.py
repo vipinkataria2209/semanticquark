@@ -1,9 +1,9 @@
 """Query parser for API requests."""
 
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from semantic_layer.exceptions import QueryError
-from semantic_layer.query.query import Query, QueryFilter, QueryOrderBy
+from semantic_layer.query.query import Query, QueryFilter, QueryOrderBy, QueryTimeDimension
 
 
 class QueryParser:
@@ -18,6 +18,19 @@ class QueryParser:
 
             # Parse measures
             measures = request_data.get("measures", [])
+
+            # Parse time dimensions
+            time_dimensions = []
+            for td_data in request_data.get("timeDimensions", []):
+                if isinstance(td_data, dict):
+                    time_dimensions.append(
+                        QueryTimeDimension(
+                            dimension=td_data["dimension"],
+                            granularity=td_data.get("granularity"),
+                            date_range=td_data.get("dateRange"),
+                            compare_date_range=td_data.get("compareDateRange"),
+                        )
+                    )
 
             # Parse filters
             filters = []
@@ -59,6 +72,7 @@ class QueryParser:
                 dimensions=dimensions,
                 measures=measures,
                 filters=filters,
+                time_dimensions=time_dimensions,
                 order_by=order_by,
                 limit=limit,
                 offset=offset,

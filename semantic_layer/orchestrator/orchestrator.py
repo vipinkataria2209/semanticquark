@@ -14,7 +14,7 @@ from semantic_layer.monitoring.logging import QueryLogger
 from semantic_layer.monitoring.metrics import MetricsCollector
 from semantic_layer.models.schema import Schema
 from semantic_layer.pre_aggregations.manager import PreAggregationManager
-from semantic_layer.query.query import Query
+from semantic_layer.query.query import Query, QueryTimeDimension
 from semantic_layer.sql.optimizer import QueryOptimizer
 from semantic_layer.sql.builder import SQLBuilder
 from semantic_layer.result.formatter import ResultFormatter
@@ -46,11 +46,148 @@ class QueryEngine:
         self.cache_key_generator = CacheKeyGenerator()
         self.query_optimizer = QueryOptimizer()
 
+    def _transform_compare_date_range(self, query: Query) -> list[Query]:
+        """Transform compare date range query into multiple queries.
+        
+        If a time dimension has compare_date_range, this method creates
+        one query per date range in the compare_date_range list.
+        """
+        # Find time dimension with compare_date_range
+        compare_date_range_td = None
+        compare_date_range_index = None
+        
+        for index, td in enumerate(query.time_dimensions):
+            if td.compare_date_range is not None:
+                if compare_date_range_td is not None:
+                    raise ValueError("compareDateRange can only exist for one timeDimension")
+                compare_date_range_td = td
+                compare_date_range_index = index
+        
+        # If no compare_date_range found, return single query
+        if compare_date_range_td is None:
+            return [query]
+        
+        # Create one query per date range
+        queries = []
+        for date_range in compare_date_range_td.compare_date_range:
+            # Create new time dimensions list
+            new_time_dimensions = []
+            for idx, td in enumerate(query.time_dimensions):
+                if idx == compare_date_range_index:
+                    # Replace compare_date_range with date_range
+                    new_td = QueryTimeDimension(
+                        dimension=td.dimension,
+                        granularity=td.granularity,
+                        date_range=date_range,
+                        compare_date_range=None
+                    )
+                    new_time_dimensions.append(new_td)
+                else:
+                    new_time_dimensions.append(td)
+            
+            # Create new query with updated time dimensions
+            new_query = Query(
+                dimensions=query.dimensions.copy(),
+                measures=query.measures.copy(),
+                filters=query.filters.copy(),
+                time_dimensions=new_time_dimensions,
+                order_by=query.order_by.copy(),
+                limit=query.limit,
+                offset=query.offset,
+            )
+            queries.append(new_query)
+        
+        return queries
+
     async def execute(
         self, query: Query, user_context: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
-        """Execute a semantic query and return formatted results."""
+        """Execute a semantic query and return formatted results.
+        
+        If the query has compare_date_range, it will be transformed into
+        multiple queries and results will be combined.
+        """
         start_time = time.time()
+        cache_hit = False
+
+        try:
+            # Check for compare date range and transform if needed
+            queries = self._transform_compare_date_range(query)
+            
+            # If multiple queries (compare date range), execute all and combine
+            if len(queries) > 1:
+                # Find original compare_date_range from original query
+                original_compare_date_range = None
+                for td in query.time_dimensions:
+                    if td.compare_date_range:
+                        original_compare_date_range = td.compare_date_range
+                        break
+                
+                results_list = []
+                for q in queries:
+                    result = await self._execute_single_query(q, user_context, start_time)
+                    results_list.append(result)
+                
+                # Combine results with period indicators
+                combined_data = []
+                for idx, result in enumerate(results_list):
+                    for row in result.get("data", []):
+                        # Add period indicator
+                        if original_compare_date_range and idx < len(original_compare_date_range):
+                            date_range = original_compare_date_range[idx]
+                            row["_compareDateRange"] = f"{date_range[0]} to {date_range[1]}"
+                        combined_data.append(row)
+                
+                # Return combined result
+                return {
+                    "data": combined_data,
+                    "meta": {
+                        "query": {
+                            "dimensions": query.dimensions,
+                            "measures": query.measures,
+                            "time_dimensions": [td.dict() for td in query.time_dimensions],
+                        },
+                        "execution_time_ms": (time.time() - start_time) * 1000,
+                        "row_count": len(combined_data),
+                        "compare_date_range": True,
+                    }
+                }
+            
+            # Single query execution
+            query = queries[0]
+            return await self._execute_single_query(query, user_context, start_time)
+            
+        except Exception as e:
+            execution_time = (time.time() - start_time) * 1000
+            
+            # Log error
+            user_id = user_context.get("user_id") if user_context else None
+            self.query_logger.log_query(
+                query=query,
+                execution_time_ms=execution_time,
+                cache_hit=False,
+                error=str(e),
+                user_id=user_id,
+            )
+            
+            # Record error metrics
+            self.metrics_collector.record_query(
+                execution_time_ms=execution_time,
+                cache_hit=False,
+                error=True,
+            )
+            
+            raise ExecutionError(
+                f"Query execution failed: {str(e)}",
+                details={"execution_time_ms": execution_time},
+            ) from e
+
+    async def _execute_single_query(
+        self, query: Query, user_context: Optional[Dict[str, Any]] = None, start_time: Optional[float] = None
+    ) -> Dict[str, Any]:
+        """Execute a single query (internal method)."""
+        if start_time is None:
+            start_time = time.time()
         cache_hit = False
 
         try:
