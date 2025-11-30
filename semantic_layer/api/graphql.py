@@ -7,11 +7,13 @@ try:
     from strawberry.fastapi import GraphQLRouter
     import strawberry
     GRAPHQL_AVAILABLE = True
-except ImportError:
+    _graphql_import_error = None
+except ImportError as e:
     GRAPHQL_AVAILABLE = False
     StrawberrySchema = None
     GraphQLRouter = None
     strawberry = None
+    _graphql_import_error = str(e)
 
 from semantic_layer.orchestrator import QueryEngine
 from semantic_layer.exceptions import ExecutionError
@@ -160,13 +162,12 @@ else:
 
     def create_graphql_schema():
         """Create GraphQL schema (not available)."""
-        raise ExecutionError(
-            "GraphQL is not available. Install with: pip install strawberry-graphql"
-        )
+        # Return None instead of raising - allows app to start without GraphQL
+        return None
 
     def create_graphql_router(query_engine: QueryEngine):
         """Create GraphQL router (not available)."""
-        raise ExecutionError(
-            "GraphQL is not available. Install with: pip install strawberry-graphql"
-        )
+        # Return None instead of raising - allows app to start without GraphQL
+        # The error message will be logged in app.py
+        return None
 

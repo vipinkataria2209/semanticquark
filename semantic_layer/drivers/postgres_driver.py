@@ -37,9 +37,15 @@ class PostgresDriver(BaseDriver):
     async def disconnect(self) -> None:
         """Close PostgreSQL connection."""
         if self.engine:
-            await self.engine.dispose()
-            self.engine = None
-            self.session_factory = None
+            try:
+                await self.engine.dispose()
+            except Exception as e:
+                # Log error but don't raise - cleanup should be best-effort
+                # This can happen if greenlet is not installed or during shutdown
+                print(f"Warning: Error disposing engine: {str(e)}")
+            finally:
+                self.engine = None
+                self.session_factory = None
 
     async def execute_query(self, sql: str, params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """Execute a SQL query and return results."""

@@ -209,9 +209,15 @@ async def lifespan(app: FastAPI):
             app.include_router(graphql_router, prefix="/graphql", tags=["graphql"])
             print("GraphQL API enabled at /graphql")
         else:
-            print("GraphQL router not created (strawberry-graphql may not be installed)")
+            # Check if it's an import issue
+            from semantic_layer.api.graphql import _graphql_import_error
+            if _graphql_import_error:
+                print(f"⚠️  GraphQL not available: {_graphql_import_error}")
+                print("   Install with: pip install strawberry-graphql[fastapi]")
+            else:
+                print("⚠️  GraphQL router not created (strawberry-graphql may not be installed)")
     except Exception as e:
-        print(f"GraphQL not available: {e}")
+        print(f"⚠️  GraphQL not available: {e}")
         import traceback
         traceback.print_exc()
 
