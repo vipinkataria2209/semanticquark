@@ -1,9 +1,26 @@
-"""Monitoring, metrics, logging, and observability."""
+"""Monitoring and observability for SemanticQuark."""
 
-from semantic_layer.monitoring.metrics import MetricsCollector
+# Legacy imports (backward compatibility)
 from semantic_layer.monitoring.logging import QueryLogger
-from semantic_layer.monitoring.health import HealthChecker
-from semantic_layer.monitoring.tracing import Tracer, TraceContext
+from semantic_layer.monitoring.metrics import MetricsCollector
 
-__all__ = ["MetricsCollector", "QueryLogger", "HealthChecker", "Tracer", "TraceContext"]
+# New callback-based system
+from semantic_layer.monitoring.callbacks import BaseQueryCallback
+from semantic_layer.monitoring.callback_manager import CallbackManager
 
+# Built-in handlers
+from semantic_layer.monitoring.handlers import (
+    LoggingCallbackHandler,
+    MetricsCallbackHandler,
+)
+
+__all__ = [
+    # Legacy
+    "QueryLogger",
+    "MetricsCollector",
+    # New callback system
+    "BaseQueryCallback",
+    "CallbackManager",
+    "LoggingCallbackHandler",
+    "MetricsCallbackHandler",
+]
