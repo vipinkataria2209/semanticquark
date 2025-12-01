@@ -1,4 +1,62 @@
-"""Basic test script to verify the semantic layer works."""
+""""""Basic test script to verify the semantic layer works.
+
+This module provides a comprehensive test suite for validating the core functionality
+of the semantic layer, including schema loading, database connectivity, query parsing,
+and SQL generation capabilities.
+
+The test script performs the following validations:
+    1. Schema Loading: Verifies that cube definitions can be loaded from model files
+    2. Database Connection: Tests optional database connectivity (PostgreSQL)
+    3. Query Parsing: Validates query structure parsing from dictionary format
+    4. SQL Generation: Ensures SQL queries are correctly generated from parsed queries
+
+Usage:
+    Run directly to execute all basic tests:
+        $ python -m semantic_layer.tests.test_basic
+    
+    Or import and run programmatically:
+        >>> import asyncio
+        >>> from semantic_layer.tests.test_basic import test_basic
+        >>> asyncio.run(test_basic())
+
+Requirements:
+    - Model files must exist in the models/ directory
+    - DATABASE_URL environment variable (optional, for connection tests)
+    - PostgreSQL connector dependencies (optional)
+
+Example Output:
+    ============================================================
+    Testing Semantic Layer - Basic Functionality
+    ============================================================
+    
+    1. Loading schema...
+       ✓ Schema loaded with 1 cube(s)
+       - Cube: orders (3 dimensions, 2 measures)
+    
+    2. Testing database connection...
+       ✓ Database connection successful
+    
+    3. Testing query parsing...
+       ✓ Query parsed successfully
+    
+    4. Testing SQL generation...
+       ✓ SQL generated successfully
+    
+    ============================================================
+    ✓ All basic tests passed!
+    ============================================================
+
+Notes:
+    - Database connection tests are skipped if DATABASE_URL is not configured
+    - Tests gracefully handle missing dependencies or configuration
+    - All test failures include detailed error messages for debugging
+
+Author:
+    Semantic Layer Team
+
+Version:
+    1.0.0
+""""""
 
 import asyncio
 import os

@@ -25,7 +25,7 @@
 - **Build faster analytics** - Intelligent caching and pre-aggregation for sub-second queries
 - **Secure your data** - Row-level and column-level security built-in
 
-Think of it as **Cube.js for Python** - but with native Python integration, ML capabilities, and data science workflow support.
+Think of it as **Cube.js for Python** - but with native Python integration, ML capabilities, and data science workflow support. 
 
 ## ✨ Features
 
