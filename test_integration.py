@@ -1,4 +1,4 @@
-"""Integration test with mock data."""
+"""Integration test with mock data for scenarios"""
 
 import asyncio
 from unittest.mock import AsyncMock, MagicMock
