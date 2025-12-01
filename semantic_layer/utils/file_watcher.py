@@ -11,20 +11,31 @@ try:
 except ImportError:
     WATCHDOG_AVAILABLE = False
     Observer = None
-    FileSystemEventHandler = None
+    # Create a dummy base class when watchdog is not available
+    class FileSystemEventHandler:
+        pass
 
 
-class ModelFileHandler(FileSystemEventHandler):
-    """Handler for model file changes."""
+if WATCHDOG_AVAILABLE:
+    class ModelFileHandler(FileSystemEventHandler):
+        """Handler for model file changes."""
 
-    def __init__(self, callback: Callable[[Path], None]):
-        """Initialize handler."""
-        self.callback = callback
+        def __init__(self, callback: Callable[[Path], None]):
+            """Initialize handler."""
+            self.callback = callback
 
-    def on_modified(self, event):
-        """Handle file modification."""
-        if not event.is_directory and event.src_path.endswith(('.yaml', '.yml')):
-            self.callback(Path(event.src_path))
+        def on_modified(self, event):
+            """Handle file modification."""
+            if not event.is_directory and event.src_path.endswith(('.yaml', '.yml')):
+                self.callback(Path(event.src_path))
+else:
+    # Dummy class when watchdog is not available
+    class ModelFileHandler:
+        """Dummy handler when watchdog is not available."""
+        
+        def __init__(self, callback: Callable[[Path], None]):
+            """Initialize dummy handler."""
+            pass
 
 
 class FileWatcher:
@@ -56,4 +67,3 @@ class FileWatcher:
             self.observer.stop()
             self.observer.join()
             self.observer = None
-

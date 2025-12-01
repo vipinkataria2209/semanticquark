@@ -9,21 +9,45 @@ except ImportError:
     MYSQL_AVAILABLE = False
     aiomysql = None
 
+from typing import Optional, Dict, Any
 from semantic_layer.drivers.base_driver import BaseDriver, ConnectionConfig
 from semantic_layer.exceptions import ExecutionError
 
 
 class MySQLDriver(BaseDriver):
     """MySQL database driver."""
+    
+    @property
+    def name(self) -> str:
+        """Plugin name."""
+        return "mysql"
+    
+    @property
+    def version(self) -> str:
+        """Plugin version."""
+        return "1.0.0"
 
-    def __init__(self, config: ConnectionConfig):
-        """Initialize MySQL connector."""
+    def __init__(self, config: Optional[ConnectionConfig] = None):
+        """Initialize MySQL connector.
+        
+        Args:
+            config: Connection configuration (optional for plugin initialization)
+        """
         if not MYSQL_AVAILABLE:
             raise ExecutionError(
-                "MySQL connector not available. Install with: pip install aiomysql"
+                "MySQL connector not available. Install with: pip install semanticquark[mysql]"
             )
-        self.config = config
+        super().__init__(config)
         self._pool: Optional[Any] = None
+    
+    def initialize(self, config: Dict[str, Any]) -> None:
+        """Initialize driver from config dict (PluginInterface method).
+        
+        Args:
+            config: Configuration dictionary
+        """
+        super().initialize(config)
+        self._pool = None
 
     async def connect(self) -> None:
         """Connect to MySQL database."""
@@ -83,7 +107,8 @@ class MySQLDriver(BaseDriver):
         except Exception:
             return False
 
-    def get_dialect(self) -> str:
-        """Get SQL dialect."""
+    @property
+    def dialect(self) -> str:
+        """Get SQL dialect name."""
         return "mysql"
 

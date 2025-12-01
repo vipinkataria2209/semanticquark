@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel
+from semantic_layer.plugins.base import PluginInterface
 
 
 class ConnectionConfig(BaseModel):
@@ -14,13 +15,57 @@ class ConnectionConfig(BaseModel):
     max_overflow: int = 20
 
 
-class BaseDriver(ABC):
+class BaseDriver(PluginInterface, ABC):
     """Base class for database drivers."""
-
-    def __init__(self, config: ConnectionConfig):
-        """Initialize connector with configuration."""
-        self.config = config
+    
+    @property
+    def plugin_type(self) -> str:
+        """Plugin type identifier."""
+        return "driver"
+    
+    def __init__(self, config: Optional[ConnectionConfig] = None):
+        """Initialize connector with configuration.
+        
+        Args:
+            config: Connection configuration (optional for plugin initialization)
+        """
+        if config is not None:
+            self.config = config
+        else:
+            self.config = None
         self._pool = None
+    
+    def initialize(self, config: Dict[str, Any]) -> None:
+        """Initialize driver from config dict (PluginInterface method).
+        
+        Args:
+            config: Configuration dictionary
+        """
+        self.config = ConnectionConfig(**config)
+    
+    def get_config_schema(self) -> Dict[str, Any]:
+        """Return configuration schema for this driver.
+        
+        Returns:
+            Dict[str, Any]: Configuration schema
+        """
+        return {
+            "url": {
+                "type": "string",
+                "description": "Database connection URL",
+                "required": True
+            },
+            "pool_size": {
+                "type": "integer",
+                "description": "Connection pool size",
+                "default": 10
+            },
+            "max_overflow": {
+                "type": "integer",
+                "description": "Maximum pool overflow",
+                "default": 20
+            }
+        }
 
     @abstractmethod
     async def connect(self) -> None:

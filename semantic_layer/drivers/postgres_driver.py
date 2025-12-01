@@ -6,16 +6,46 @@ import asyncpg
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
+from typing import Optional, Dict, Any
 from semantic_layer.drivers.base_driver import BaseDriver, ConnectionConfig
 from semantic_layer.exceptions import ExecutionError
 
 
 class PostgresDriver(BaseDriver):
     """PostgreSQL database driver."""
+    
+    @property
+    def name(self) -> str:
+        """Plugin name."""
+        return "postgres"
+    
+    @property
+    def version(self) -> str:
+        """Plugin version."""
+        return "1.0.0"
+    
+    @property
+    def dialect(self) -> str:
+        """Get SQL dialect name."""
+        return "postgresql"
 
-    def __init__(self, config: ConnectionConfig):
-        """Initialize PostgreSQL connector."""
+    def __init__(self, config: Optional[ConnectionConfig] = None):
+        """Initialize PostgreSQL connector.
+        
+        Args:
+            config: Connection configuration (optional for plugin initialization)
+        """
         super().__init__(config)
+        self.engine = None
+        self.session_factory = None
+    
+    def initialize(self, config: Dict[str, Any]) -> None:
+        """Initialize driver from config dict (PluginInterface method).
+        
+        Args:
+            config: Configuration dictionary
+        """
+        super().initialize(config)
         self.engine = None
         self.session_factory = None
 
@@ -72,9 +102,4 @@ class PostgresDriver(BaseDriver):
             return len(result) > 0
         except Exception:
             return False
-
-    @property
-    def dialect(self) -> str:
-        """Get SQL dialect name."""
-        return "postgresql"
 

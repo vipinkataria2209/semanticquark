@@ -208,12 +208,28 @@ class SQLBuilder:
                 # Ensure order is a QueryOrderBy object with dimension attribute
                 if not hasattr(order, 'dimension'):
                     continue  # Skip invalid order_by items
-                cube, dim_name = self.schema.get_cube_for_dimension(order.dimension)
-                dimension = cube.get_dimension(dim_name)
-                table_alias = cube_aliases[cube.name]
-                dim_sql = dimension.get_sql_expression(table_alias)
-                direction = order.direction.upper()
-                order_parts.append(f"{dim_sql} {direction}")
+                
+                # Try to get as dimension first, then as measure
+                order_sql = None
+                try:
+                    cube, dim_name = self.schema.get_cube_for_dimension(order.dimension)
+                    dimension = cube.get_dimension(dim_name)
+                    table_alias = cube_aliases[cube.name]
+                    order_sql = dimension.get_sql_expression(table_alias)
+                except Exception:
+                    # If not a dimension, try as measure
+                    try:
+                        cube, meas_name = self.schema.get_cube_for_measure(order.dimension)
+                        measure = cube.get_measure(meas_name)
+                        table_alias = cube_aliases[cube.name]
+                        order_sql = measure.get_sql_expression(table_alias)
+                    except Exception:
+                        # Skip if neither dimension nor measure
+                        continue
+                
+                if order_sql:
+                    direction = order.direction.upper()
+                    order_parts.append(f"{order_sql} {direction}")
             if order_parts:
                 order_by_clause = "ORDER BY " + ", ".join(order_parts)
 

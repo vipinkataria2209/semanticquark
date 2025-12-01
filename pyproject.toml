@@ -8,6 +8,8 @@ version = "0.1.0"
 description = "SemanticQuark - The Fundamental Building Block for Semantic Analytics. Python-based semantic layer platform."
 readme = "README.md"
 requires-python = ">=3.9"
+
+# CORE DEPENDENCIES (always installed - minimal required)
 dependencies = [
     "fastapi>=0.104.0",
     "uvicorn[standard]>=0.24.0",
@@ -15,16 +17,37 @@ dependencies = [
     "pydantic-settings>=2.1.0",
     "sqlalchemy>=2.0.0",
     "greenlet>=3.0.0",
-    "asyncpg>=0.29.0",
-    "aiomysql>=0.2.0",
     "pyyaml>=6.0.1",
-    "redis>=5.0.0",
-    "aioredis>=2.0.1",
     "python-dotenv>=1.0.0",
     "structlog>=23.2.0",
 ]
 
 [project.optional-dependencies]
+# Database drivers
+postgres = [
+    "asyncpg>=0.29.0",
+]
+mysql = [
+    "aiomysql>=0.2.0",
+]
+
+# Caching backends
+redis = [
+    "redis>=5.0.0",
+    "aioredis>=2.0.1",
+]
+
+# Authentication
+jwt = [
+    "PyJWT>=2.8.0",
+]
+
+# GraphQL support
+graphql = [
+    "strawberry-graphql[fastapi]>=0.200.0",
+]
+
+# Development tools
 dev = [
     "pytest>=7.4.0",
     "pytest-asyncio>=0.21.0",
@@ -32,6 +55,41 @@ dev = [
     "black>=23.11.0",
     "ruff>=0.1.6",
     "mypy>=1.7.0",
+]
+
+# Monitoring and utilities
+monitoring = [
+    "prometheus-client>=0.19.0",
+]
+utilities = [
+    "watchdog>=3.0.0",
+    "httpx>=0.25.0",
+    "click>=8.1.0",
+]
+
+# LLM providers (for future use)
+llm-openai = [
+    "openai>=1.0.0",
+]
+llm-anthropic = [
+    "anthropic>=0.7.0",
+]
+llm-ollama = [
+    "ollama>=0.1.0",
+]
+
+# Integration frameworks (for future use)
+datahub = [
+    "acryl-datahub>=0.13.0",
+]
+langchain = [
+    "langchain>=0.1.0",
+    "langchain-core>=0.1.0",
+]
+
+# All optional dependencies (for development/testing)
+all = [
+    "semanticquark[postgres,mysql,redis,jwt,graphql,dev,monitoring,utilities,llm-openai,llm-anthropic,llm-ollama,datahub,langchain]",
 ]
 
 [tool.black]
